@@ -10,7 +10,7 @@ class ListRelatedThoughtsDTO(BaseModel):
     thought_id: str
 
 
-class ListRelatedThoughtsUseCase:
+class ListRelatedThoughtsUsecase:
     def __init__(
         self,
         thought_vector_store: ThoughtVectorStore,
