@@ -1,73 +1,12 @@
+from pydantic import BaseModel
 
+from backend.core.domain.entities.thought import Thought
+from backend.core.domain.repositories.thought_repository import ThoughtRepository
+from backend.core.domain.repositories.thought_vector_store import ThoughtVectorStore
+from backend.core.domain.services.categories_extractor import CategoriesExtractor
+from backend.core.domain.services.summary_generator import SummaryGenerator
+from backend.core.domain.services.title_generator import TitleGenerator
 
-# -- DEPS -------------
-
-from abc import ABC, abstractmethod
-from datetime import datetime, timezone
-from pydantic import BaseModel, Field
-from typing import List, Optional
-
-
-class Entity(BaseModel):
-    created_at: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc))
-    updated_at: datetime = Field(
-        default_factory=lambda: datetime.now(timezone.utc))
-    deleted_at: Optional[datetime] = None
-
-
-class Thought(Entity):
-    id: str
-    title: str
-    summary: str
-    text: str
-    categories: List[str]
-    embeddings: List[float]
-
-
-class SummaryGenerator(ABC):
-
-    @abstractmethod
-    def generate(thought: Thought) -> str:
-        pass
-
-
-class TitleGenerator(ABC):
-
-    @abstractmethod
-    def generate(thought: Thought) -> str:
-        pass
-
-
-class CategoriesExtractor(ABC):
-
-    @abstractmethod
-    def extract(thought: Thought) -> List[str]:
-        pass
-
-
-class ThoughtRepository(ABC):
-
-    @abstractmethod
-    def save(thought: Thought) -> None:
-        pass
-
-    @abstractmethod
-    def get_by_id(id: str) -> Thought:
-        pass
-
-    @abstractmethod
-    def list() -> List[Thought]:
-        pass
-
-
-class ThoughtVectorStore(ABC):
-    @abstractmethod
-    def create_index(thought: Thought) -> None:
-        pass
-
-
-# ---------------------
 
 class CreateThoughtDTO(BaseModel):
     text: str
