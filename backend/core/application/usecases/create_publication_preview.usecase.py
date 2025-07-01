@@ -40,7 +40,10 @@ class CreatePublicationPreviewUsecase ():
         saved = self.publication_repository.save(
             Publication(
                 title=f"Preview - {outlining[0]}",
-                outlining=outlining
+                format=dto.publication_format,
+                stage="preview",
+                outlining=outlining,
+                thought_ids=dto.selected_thought_ids
             )
         )
 

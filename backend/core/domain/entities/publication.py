@@ -24,3 +24,4 @@ class Publication(Entity):
     outlining: List[str]
     format: PublicationFormat
     stage: PublicationStage
+    thought_ids: List[str]
