@@ -21,3 +21,7 @@ class ThoughtRepository(ABC):
     @abstractmethod
     def delete(id: str) -> None:
         pass
+
+    @abstractmethod
+    def update(id: str, text: str) -> None:
+        pass
