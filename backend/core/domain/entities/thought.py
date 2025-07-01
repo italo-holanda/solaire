@@ -1,4 +1,5 @@
 from typing import List
+from backend.core.domain.entities.category import Category
 from backend.core.domain.entities.entity import Entity
 
 
@@ -7,5 +8,5 @@ class Thought(Entity):
     title: str
     summary: str
     text: str
-    categories: List[str]
+    categories: List[Category]
     embeddings: List[float]
