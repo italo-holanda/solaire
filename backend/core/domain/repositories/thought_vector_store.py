@@ -19,3 +19,7 @@ class ThoughtVectorStore(ABC):
     @abstractmethod
     def search_similar(thought: Thought) -> List[ThoughtVector]:
         pass
+
+    @abstractmethod
+    def delete_index(thought: Thought) -> None:
+        pass

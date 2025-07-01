@@ -17,3 +17,7 @@ class ThoughtRepository(ABC):
     @abstractmethod
     def list() -> List[Thought]:
         pass
+
+    @abstractmethod
+    def delete(id: str) -> None:
+        pass
