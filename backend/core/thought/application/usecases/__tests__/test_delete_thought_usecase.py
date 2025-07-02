@@ -37,3 +37,13 @@ class TestDeleteThoughtUsecase:
 
         assert deleted_thought == thought_id
 
+    def test__should_delete_thought_index(self):
+        thought_id = faker.uuid4()
+
+        self.usecase.execute(DeleteThoughtDTO(thought_id=thought_id))
+
+        self.dependencies["thought_vector_store"].delete_index.assert_called_once()
+        deleted_thought = self.dependencies["thought_vector_store"].delete_index.call_args[0][0]
+
+        assert deleted_thought == thought_id
+
