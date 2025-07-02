@@ -23,6 +23,6 @@ class ListThoughtsUsecase:
     def execute(self, dto: ListThoughtsDTO) -> List[Thought]:
         if not dto.search_term:
             return self.thought_repository.list()
-        return self.thought_vector_store.search_similar(
-            Thought(text=f'{dto.search_term}')
+        return self.thought_vector_store.search_similar_by_text(
+            thought_text=f'{dto.search_term}'
         )
