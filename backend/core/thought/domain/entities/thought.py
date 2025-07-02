@@ -4,7 +4,6 @@ from backend.core.common.domain.entities.entity import Entity
 
 
 class Thought(Entity):
-    id: str
     title: str
     summary: str
     text: str

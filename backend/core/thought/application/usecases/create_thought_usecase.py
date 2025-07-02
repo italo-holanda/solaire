@@ -4,8 +4,8 @@ from backend.core.thought.domain.entities.thought import Thought
 from backend.core.thought.domain.repositories.thought_repository import ThoughtRepository
 from backend.core.thought.domain.repositories.thought_vector_store import ThoughtVectorStore
 from backend.core.category.domain.services.categories_extractor import CategoriesExtractor
-from backend.core.thought.domain.services.thought_summary_generator import SummaryGenerator
-from backend.core.thought.domain.services.thought_title_generator import TitleGenerator
+from backend.core.thought.domain.services.thought_summary_generator import ThoughtSummaryGenerator
+from backend.core.thought.domain.services.thought_title_generator import ThoughtTitleGenerator
 
 
 class CreateThoughtDTO(BaseModel):
@@ -15,8 +15,8 @@ class CreateThoughtDTO(BaseModel):
 class CreateThoughtUsecase ():
     def __init__(
         self,
-        summary_generator: SummaryGenerator,
-        title_generator: TitleGenerator,
+        summary_generator: ThoughtSummaryGenerator,
+        title_generator: ThoughtTitleGenerator,
         categories_extractor: CategoriesExtractor,
         thought_repository: ThoughtRepository,
         thought_vector_store: ThoughtVectorStore
@@ -31,12 +31,13 @@ class CreateThoughtUsecase ():
 
         if not dto.text:
             raise ValueError("Thought text is required")
-        if len(dto.text) < 100 or len(dto.text > 1000):
-            raise ValueError('Text must be > 100 and <= 1000')
+        if len(dto.text.strip()) <= 100 or len(dto.text.strip()) > 1000:
+            raise ValueError('Text must be >= 100 and <= 1000')
 
         thought = Thought(
             text=dto.text,
             summary='',
+            title='',
             categories=[],
             embeddings=[]
         )
