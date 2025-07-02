@@ -3,7 +3,7 @@ from pydantic import BaseModel
 
 from backend.core.thought.application.usecases.list_related_thoughts_usecase import ListRelatedThoughtsUsecase
 from backend.core.thought.domain.repositories.thought_repository import ThoughtRepository
-from backend.core.thought.domain.services.thought_topic_suggester import TopicSuggester
+from backend.core.thought.domain.services.thought_topic_suggester import ThoughtTopicSuggester
 
 
 class SuggestSimilarTopicsDTO(BaseModel):
@@ -14,7 +14,7 @@ class SuggestSimilarTopicsUsecase:
     def __init__(
         self,
         list_related_thoughts_usecase: ListRelatedThoughtsUsecase,
-        topic_suggester: TopicSuggester,
+        topic_suggester: ThoughtTopicSuggester,
         thought_repository: ThoughtRepository
     ):
         self.list_related_thoughts_usecase = list_related_thoughts_usecase
