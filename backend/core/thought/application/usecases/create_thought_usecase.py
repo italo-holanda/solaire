@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+from backend.core.common.domain.util import remove_extra_spaces
 from backend.core.thought.domain.entities.thought import Thought
 from backend.core.thought.domain.repositories.thought_repository import ThoughtRepository
 from backend.core.thought.domain.repositories.thought_vector_store import ThoughtVectorStore
@@ -31,7 +32,7 @@ class CreateThoughtUsecase ():
 
         if not dto.text:
             raise ValueError("Thought text is required")
-        if len(dto.text.strip()) <= 100 or len(dto.text.strip()) > 1000:
+        if len(remove_extra_spaces(dto.text)) <= 100 or len(remove_extra_spaces(dto.text)) > 1000:
             raise ValueError('Text must be >= 100 and <= 1000')
 
         thought = Thought(
