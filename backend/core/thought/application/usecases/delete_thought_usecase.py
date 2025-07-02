@@ -11,11 +11,11 @@ class DeleteThoughtUsecase:
     def __init__(
         self,
         thought_repository: ThoughtRepository,
-        thougth_vector_store: ThoughtVectorStore
+        thought_vector_store: ThoughtVectorStore
     ):
         self.thought_repository = thought_repository
-        self.thougth_vector_store = thougth_vector_store
+        self.thought_vector_store = thought_vector_store
 
     def execute(self, dto: DeleteThoughtDTO) -> None:
         self.thought_repository.delete(dto.thought_id)
-        self.thougth_vector_store.delete_index(dto.thought_id)
+        self.thought_vector_store.delete_index(dto.thought_id)
