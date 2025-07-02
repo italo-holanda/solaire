@@ -1,6 +1,6 @@
 from typing import List
-from backend.core.domain.entities.category import Category
-from backend.core.domain.entities.entity import Entity
+from backend.core.category.domain.entities.category import Category
+from backend.core.common.domain.entities.entity import Entity
 
 
 class Thought(Entity):

@@ -1,7 +1,7 @@
 from typing import List, Literal
 
 from backend.core.category.domain.entities.category import Category
-from backend.core.domain.entities.entity import Entity
+from backend.core.common.domain.entities.entity import Entity
 
 PublicationFormat = Literal[
     "linkedin_post",

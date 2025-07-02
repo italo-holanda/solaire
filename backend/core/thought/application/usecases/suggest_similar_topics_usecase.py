@@ -1,7 +1,7 @@
 from typing import List
 from pydantic import BaseModel
 
-from backend.core.application.usecases.list_related_thoughts_usecase import ListRelatedThoughtsUsecase
+from backend.core.thought.application.usecases.list_related_thoughts_usecase import ListRelatedThoughtsUsecase
 from backend.core.thought.domain.repositories.thought_repository import ThoughtRepository
 from backend.core.thought.domain.services.thought_topic_suggester import TopicSuggester
 

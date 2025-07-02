@@ -3,8 +3,8 @@ from pydantic import BaseModel
 
 from backend.core.publication.domain.entities.publication import Publication, PublicationFormat
 from backend.core.publication.domain.repositories.publication_repository import PublicationRepository
+from backend.core.publication.domain.services.publication_outlining_generator import PublicationOutliningGenerator
 from backend.core.thought.domain.repositories.thought_repository import ThoughtRepository
-from backend.core.domain.services.publication_outlining_generator import PublicationOutliningGenerator
 
 
 class CreatePublicationPreviewDTO(BaseModel):

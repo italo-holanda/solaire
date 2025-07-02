@@ -1,4 +1,4 @@
-from backend.core.domain.entities.entity import Entity
+from backend.core.common.domain.entities.entity import Entity
 
 
 class Category(Entity):
