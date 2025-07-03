@@ -54,7 +54,8 @@ class TestCreatePublicationPreviewUsecase:
             outlining=outlining,
             format=publication_format,
             stage="preview",
-            thought_ids=thought_ids
+            thought_ids=thought_ids,
+            user_guideline=user_guideline
         )
         self.dependencies["publication_repository"].save.return_value = publication
 

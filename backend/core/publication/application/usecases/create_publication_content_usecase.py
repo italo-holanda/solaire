@@ -40,7 +40,7 @@ class CreatePublicationContentUsecase ():
 
         content = self.content_generator.generate(
             thoughts,
-            dto.user_guideline,
+            publication.user_guideline,
             outlining=publication.outlining
         )
 

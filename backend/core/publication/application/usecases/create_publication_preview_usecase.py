@@ -48,7 +48,8 @@ class CreatePublicationPreviewUsecase ():
                 format=dto.publication_format,
                 stage="preview",
                 outlining=outlining,
-                thought_ids=dto.selected_thought_ids
+                thought_ids=dto.selected_thought_ids,
+                user_guideline=dto.user_guideline
             )
         )
 

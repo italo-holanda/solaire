@@ -24,3 +24,4 @@ class Publication(Entity):
     format: PublicationFormat
     stage: PublicationStage
     thought_ids: List[str]
+    user_guideline: str
