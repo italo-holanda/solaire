@@ -17,7 +17,6 @@ PublicationStage = Literal[
 
 
 class Publication(Entity):
-    id: str
     title: str
     content: str
     categories: List[Category]

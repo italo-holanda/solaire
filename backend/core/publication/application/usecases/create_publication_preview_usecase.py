@@ -32,6 +32,9 @@ class CreatePublicationPreviewUsecase ():
             if thought:
                 thoughts.append(thought)
 
+        if len(thoughts) == 0:
+            raise ValueError("No thoughts found")
+
         outlining = self.outlining_generator.generate(
             thoughts,
             dto.user_guideline
@@ -40,6 +43,8 @@ class CreatePublicationPreviewUsecase ():
         saved = self.publication_repository.save(
             Publication(
                 title=f"Preview - {outlining[0]}",
+                content="",
+                categories=[],
                 format=dto.publication_format,
                 stage="preview",
                 outlining=outlining,
