@@ -1,6 +1,4 @@
-
-
-from typing import Container
+from backend.infra.container.container import Container
 
 from backend.core.category.domain.repositories.category_repository import CategoryRepositoryInterface
 from backend.core.publication.domain.repositories.publication_repository import PublicationRepositoryInterface
