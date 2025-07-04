@@ -2,7 +2,7 @@ from typing import List
 from pydantic import BaseModel
 
 from backend.core.thought.application.usecases.list_related_thoughts_usecase import ListRelatedThoughtsUsecase
-from backend.core.thought.domain.repositories.thought_repository import ThoughtRepository
+from backend.core.thought.domain.repositories.thought_repository import ThoughtRepositoryInterface
 from backend.core.thought.domain.services.thought_topic_suggester import ThoughtTopicSuggester
 
 
@@ -15,7 +15,7 @@ class SuggestSimilarTopicsUsecase:
         self,
         list_related_thoughts_usecase: ListRelatedThoughtsUsecase,
         topic_suggester: ThoughtTopicSuggester,
-        thought_repository: ThoughtRepository
+        thought_repository: ThoughtRepositoryInterface
     ):
         self.list_related_thoughts_usecase = list_related_thoughts_usecase
         self.topic_suggester = topic_suggester

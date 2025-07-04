@@ -4,7 +4,7 @@ from typing import List
 from backend.core.thought.domain.entities.thought import Thought
 
 
-class ThoughtRepository(ABC):
+class ThoughtRepositoryInterface(ABC):
 
     @abstractmethod
     def save(thought: Thought) -> None:

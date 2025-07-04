@@ -1,10 +1,10 @@
 from pydantic import BaseModel
 
 from backend.core.publication.domain.entities.publication import Publication, PublicationFormat
-from backend.core.publication.domain.repositories.publication_repository import PublicationRepository
+from backend.core.publication.domain.repositories.publication_repository import PublicationRepositoryInterface
 from backend.core.publication.domain.services.publication_content_generator import PublicationContentGenerator
 from backend.core.publication.domain.services.publication_title_generator import PublicationTitleGenerator
-from backend.core.thought.domain.repositories.thought_repository import ThoughtRepository
+from backend.core.thought.domain.repositories.thought_repository import ThoughtRepositoryInterface
 
 
 class CreatePublicationContentDTO(BaseModel):
@@ -15,8 +15,8 @@ class CreatePublicationContentDTO(BaseModel):
 class CreatePublicationContentUsecase ():
     def __init__(
         self,
-        thought_repository: ThoughtRepository,
-        publication_repository: PublicationRepository,
+        thought_repository: ThoughtRepositoryInterface,
+        publication_repository: PublicationRepositoryInterface,
         content_generator: PublicationContentGenerator,
         title_generator: PublicationTitleGenerator
     ):

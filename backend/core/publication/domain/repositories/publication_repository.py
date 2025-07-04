@@ -4,7 +4,7 @@ from typing import List
 from backend.core.publication.domain.entities.publication import Publication
 
 
-class PublicationRepository(ABC):
+class PublicationRepositoryInterface(ABC):
 
     @abstractmethod
     def save(publication: Publication) -> Publication:

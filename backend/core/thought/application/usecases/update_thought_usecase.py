@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 from backend.core.common.domain.util import remove_extra_spaces
-from backend.core.thought.domain.repositories.thought_repository import ThoughtRepository
+from backend.core.thought.domain.repositories.thought_repository import ThoughtRepositoryInterface
 from backend.core.thought.domain.repositories.thought_vector_store import ThoughtVectorStore
 from backend.core.category.domain.services.categories_extractor import CategoriesExtractor
 from backend.core.thought.domain.services.thought_summary_generator import ThoughtSummaryGenerator
@@ -19,7 +19,7 @@ class UpdateThoughtUsecase ():
         summary_generator: ThoughtSummaryGenerator,
         title_generator: ThoughtTitleGenerator,
         categories_extractor: CategoriesExtractor,
-        thought_repository: ThoughtRepository,
+        thought_repository: ThoughtRepositoryInterface,
         thought_vector_store: ThoughtVectorStore
     ):
         self.summary_generator = summary_generator

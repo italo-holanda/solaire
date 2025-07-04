@@ -2,9 +2,9 @@ from typing import List
 from pydantic import BaseModel
 
 from backend.core.publication.domain.entities.publication import Publication, PublicationFormat
-from backend.core.publication.domain.repositories.publication_repository import PublicationRepository
+from backend.core.publication.domain.repositories.publication_repository import PublicationRepositoryInterface
 from backend.core.publication.domain.services.publication_outlining_generator import PublicationOutliningGenerator
-from backend.core.thought.domain.repositories.thought_repository import ThoughtRepository
+from backend.core.thought.domain.repositories.thought_repository import ThoughtRepositoryInterface
 
 
 class CreatePublicationPreviewDTO(BaseModel):
@@ -16,8 +16,8 @@ class CreatePublicationPreviewDTO(BaseModel):
 class CreatePublicationPreviewUsecase ():
     def __init__(
         self,
-        thought_repository: ThoughtRepository,
-        publication_repository: PublicationRepository,
+        thought_repository: ThoughtRepositoryInterface,
+        publication_repository: PublicationRepositoryInterface,
         outlining_generator: PublicationOutliningGenerator
     ):
         self.thought_repository = thought_repository

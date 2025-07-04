@@ -4,7 +4,7 @@ from typing import List
 from backend.core.category.domain.entities.category import Category
 
 
-class CategoryRepository(ABC):
+class CategoryRepositoryInterface(ABC):
 
     @abstractmethod
     def save(category: Category) -> None:

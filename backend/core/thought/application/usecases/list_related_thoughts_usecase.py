@@ -2,7 +2,7 @@ from typing import List
 from pydantic import BaseModel
 
 from backend.core.thought.domain.entities.thought import Thought
-from backend.core.thought.domain.repositories.thought_repository import ThoughtRepository
+from backend.core.thought.domain.repositories.thought_repository import ThoughtRepositoryInterface
 from backend.core.thought.domain.repositories.thought_vector_store import ThoughtVectorStore
 
 
@@ -14,7 +14,7 @@ class ListRelatedThoughtsUsecase:
     def __init__(
         self,
         thought_vector_store: ThoughtVectorStore,
-        thought_repository: ThoughtRepository,
+        thought_repository: ThoughtRepositoryInterface,
     ):
         self.thought_vector_store = thought_vector_store
         self.thought_repository = thought_repository
