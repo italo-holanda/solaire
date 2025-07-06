@@ -21,4 +21,5 @@ dependencies = [
     "python-dotenv>=1.1.1",
     "sqlalchemy>=2.0.41",
     "tomli>=2.2.1",
+    "weaviate-client>=4.0.0",
 ]

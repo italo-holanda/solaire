@@ -3,7 +3,7 @@ from pydantic import BaseModel
 
 from backend.core.thought.domain.entities.thought import Thought
 from backend.core.thought.domain.repositories.thought_repository import ThoughtRepositoryInterface
-from backend.core.thought.domain.repositories.thought_vector_store import ThoughtVectorStore
+from backend.core.thought.domain.repositories.thought_vector_store import ThoughtVectorStoreInterface
 
 
 class ListRelatedThoughtsDTO(BaseModel):
@@ -13,7 +13,7 @@ class ListRelatedThoughtsDTO(BaseModel):
 class ListRelatedThoughtsUsecase:
     def __init__(
         self,
-        thought_vector_store: ThoughtVectorStore,
+        thought_vector_store: ThoughtVectorStoreInterface,
         thought_repository: ThoughtRepositoryInterface,
     ):
         self.thought_vector_store = thought_vector_store

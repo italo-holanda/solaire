@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 from backend.core.thought.domain.repositories.thought_repository import ThoughtRepositoryInterface
-from backend.core.thought.domain.repositories.thought_vector_store import ThoughtVectorStore
+from backend.core.thought.domain.repositories.thought_vector_store import ThoughtVectorStoreInterface
 
 class DeleteThoughtDTO(BaseModel):
     thought_id: str
@@ -11,7 +11,7 @@ class DeleteThoughtUsecase:
     def __init__(
         self,
         thought_repository: ThoughtRepositoryInterface,
-        thought_vector_store: ThoughtVectorStore
+        thought_vector_store: ThoughtVectorStoreInterface
     ):
         self.thought_repository = thought_repository
         self.thought_vector_store = thought_vector_store

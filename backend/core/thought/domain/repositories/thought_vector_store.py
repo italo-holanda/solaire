@@ -11,7 +11,7 @@ class ThoughtVector(BaseModel):
     embeddings: List[float]
 
 
-class ThoughtVectorStore(ABC):
+class ThoughtVectorStoreInterface(ABC):
     @abstractmethod
     def create_index(thought: Thought) -> None:
         pass
