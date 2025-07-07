@@ -3,6 +3,7 @@ import pytest
 import time
 from faker import Faker
 
+from backend.core.thought.domain.entities.thought import Thought
 from backend.infra.databases.vectorial.thought_vector_store import ThoughtVectorStore
 
 
@@ -53,3 +54,24 @@ class TestThoughtVectorStore:
         assert collection is not None
         assert config.vectorizer_config.vectorizer == "text2vec-ollama"
         assert config.vectorizer_config.model["model"] == "llama2"
+
+    def test__should_create_new_thought_index(self):
+        """Test .create_index() method"""
+        thought = Thought(
+            title="My weekend in Estonia",
+            text="""
+                Tallinn's Old Town felt like stepping into a fairytale—cobbled streets,
+                medieval towers, and cozy cafés. Took a ferry to Saaremaa island, where
+                the peaceful nature and windmills totally reset my mind. Tried smoked 
+                fish and local beer—both amazing. Locals were friendly, though reserved.
+                Loved the mix of Nordic calm and Eastern European charm. Would go back
+                in a heartbeat. Estonia's small, but it packs a surprising punch.
+            """,
+            summary="""
+                Weekend in Estonia: medieval Tallinn, peaceful Saaremaa, great food, 
+                friendly vibes, unforgettable trip.
+            """,
+            categories=[],
+            embeddings=[]
+        )
+        self.vector_store.create_index(thought)
