@@ -44,6 +44,12 @@ echo "  OLLAMA_BASE_URL: $OLLAMA_BASE_URL"
 echo ""
 
 # Run the specific test file
-python -m pytest backend/infra/databases/vectorial/test_thought_vector_store.py -v
+#!/bin/bash
+
+PROJECT_ROOT="backend"
+
+export PYTHONPATH="${PROJECT_ROOT}:${PYTHONPATH}"
+
+pytest -vv --tb=short --ignore=backend/core "$@"  
 
 echo "Integration tests completed!" 
