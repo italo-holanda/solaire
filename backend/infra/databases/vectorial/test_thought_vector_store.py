@@ -53,7 +53,7 @@ class TestThoughtVectorStore:
 
         assert collection is not None
         assert config.vectorizer_config.vectorizer == "text2vec-ollama"
-        assert config.vectorizer_config.model["model"] == "llama2"
+        assert config.vectorizer_config.model["model"] == os.getenv("OLLAMA_MODEL")
 
     def test__should_create_new_thought_index(self):
         """Test .create_index() method"""

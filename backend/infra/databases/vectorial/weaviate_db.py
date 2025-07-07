@@ -39,7 +39,8 @@ class WeaviateDB:
             host=os.getenv("WEAVIATE_HOST", "localhost"),
             port=int(os.getenv("WEAVIATE_PORT", "8080")),
             headers=self.headers,
-            additional_config=self.additional_config
+            additional_config=self.additional_config,
+            skip_init_checks=True
         )
 
     def _configure_ollama_embedding(self):
@@ -47,22 +48,22 @@ class WeaviateDB:
 
         os.environ.setdefault(
             "ENABLE_MODULES",
-            "text2vec-ollama"
+            os.getenv("OLLAMA_TEXT2VEC_MODEL")
         )
 
         os.environ.setdefault(
             "DEFAULT_VECTORIZER_MODULE",
-            "text2vec-ollama"
+            os.getenv("OLLAMA_TEXT2VEC_MODEL")
         )
 
         os.environ.setdefault(
             "OLLAMA_BASE_URL",
-            os.getenv("OLLAMA_BASE_URL", "http://localhost:7869")
+            os.getenv("OLLAMA_BASE_URL")
         )
 
         os.environ.setdefault(
             "OLLAMA_MODEL",
-            os.getenv("OLLAMA_MODEL", "llama2")
+            os.getenv("OLLAMA_MODEL")
         )
 
         os.environ.setdefault(
