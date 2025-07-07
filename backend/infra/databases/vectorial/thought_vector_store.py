@@ -61,7 +61,7 @@ class ThoughtVectorStore:
             vectorizer_config=vectorizer_config,
             properties=[
                 weaviate.classes.config.Property(name="thought_id", data_type=weaviate.classes.config.DataType.TEXT),
-                weaviate.classes.config.Property(name="content", data_type=weaviate.classes.config.DataType.TEXT)
+                weaviate.classes.config.Property(name="text", data_type=weaviate.classes.config.DataType.TEXT)
             ]
         )
 
@@ -69,7 +69,7 @@ class ThoughtVectorStore:
         self.client.collections.get("Thought").data.insert(
             {
                 "thought_id": thought.id,
-                "content": thought.content
+                "text": thought.text
             }
         )
 
