@@ -1,8 +1,8 @@
 import os
-from dataclasses import dataclass
+import weaviate
+
 from typing import List
 
-import weaviate
 from backend.core.thought.domain.entities.thought import Thought
 from backend.core.thought.domain.repositories.thought_vector_store import ThoughtVector
 from backend.infra.databases.vectorial.weaviate_db import WeaviateDB
@@ -47,21 +47,28 @@ class ThoughtVectorStore:
         # Create collection using the new API
         if self.vector_provider == "ollama":
             vectorizer_config = weaviate.classes.config.Configure.Vectorizer.text2vec_ollama(
-                model=os.getenv("OLLAMA_MODEL", "llama2")
+                model=os.getenv("OLLAMA_MODEL"),
+                api_endpoint=os.getenv("OLLAMA_BASE_URL"),
             )
         elif self.vector_provider == "openai":
             vectorizer_config = weaviate.classes.config.Configure.Vectorizer.text2vec_openai(
-                model=os.getenv("OPENAI_EMBEDDING_MODEL", "text-embedding-3-small")
+                model=os.getenv(
+                    "OPENAI_EMBEDDING_MODEL",
+                    "text-embedding-3-small"
+                )
             )
         else:
-            raise ValueError(f"Unknown VECTOR_PROVIDER: {self.vector_provider}")
+            raise ValueError(
+                f"Unknown VECTOR_PROVIDER: {self.vector_provider}")
 
         self.client.collections.create(
             name="Thought",
             vectorizer_config=vectorizer_config,
             properties=[
-                weaviate.classes.config.Property(name="thought_id", data_type=weaviate.classes.config.DataType.TEXT),
-                weaviate.classes.config.Property(name="text", data_type=weaviate.classes.config.DataType.TEXT)
+                weaviate.classes.config.Property(
+                    name="thought_id", data_type=weaviate.classes.config.DataType.TEXT),
+                weaviate.classes.config.Property(
+                    name="text", data_type=weaviate.classes.config.DataType.TEXT)
             ]
         )
 

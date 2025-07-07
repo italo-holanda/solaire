@@ -57,6 +57,7 @@ class TestThoughtVectorStore:
 
     def test__should_create_new_thought_index(self):
         """Test .create_index() method"""
+
         thought = Thought(
             title="My weekend in Estonia",
             text="""

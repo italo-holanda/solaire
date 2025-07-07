@@ -56,6 +56,6 @@ PROJECT_ROOT="backend"
 
 export PYTHONPATH="${PROJECT_ROOT}:${PYTHONPATH}"
 
-pytest -vv --tb=short --ignore=backend/core "$@"  
+pytest -vv --ignore=backend/core "$@"  
 
 echo "Integration tests completed!" 
