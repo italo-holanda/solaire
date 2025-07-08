@@ -110,7 +110,7 @@ class ThoughtRepository(ThoughtRepositoryInterface):
         self.db.delete(thought_model)
         self.db.commit()
 
-    def update(self, id: str, text: str) -> None:
+    def update(self, thought: Thought) -> None:
         """Update a thought's text by its ID"""
         if not self.db:
             self.db = next(get_db())
@@ -122,5 +122,5 @@ class ThoughtRepository(ThoughtRepositoryInterface):
         if not thought_model:
             raise ValueError(f"Thought with id {id} not found")
 
-        thought_model.text = text
+        thought_model.text = thought.text
         self.db.commit()
