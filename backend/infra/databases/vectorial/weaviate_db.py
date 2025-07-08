@@ -1,7 +1,11 @@
 import os
 
 import weaviate
+
+from weaviate import classes as wvc
+
 from weaviate.classes.init import AdditionalConfig, Timeout
+from weaviate.classes.config import Property, DataType
 
 
 class WeaviateDB:
@@ -29,13 +33,67 @@ class WeaviateDB:
                 raise ValueError("WEAVIATE_API_KEY env var is required")
             return {"X-OpenAI-Api-Key": api_key}
         else:
-            return {}
+            return {"X-Ollama-BaseURL": 'http://ollama:11434'}
+
+    def _init_thought_schema(self, client: weaviate.WeaviateClient):
+
+        client.collections.delete("Thought")
+        client.collections.create(
+            name="Thought",
+            properties=[
+                Property(name="thought_id", data_type=DataType.TEXT),
+                Property(name="content", data_type=DataType.TEXT),
+            ],
+            vectorizer_config=wvc.config.Configure.Vectorizer.text2vec_ollama(
+                api_endpoint="http://ollama:11434",
+                model="nomic-embed-text"
+            ),
+            generative_config=wvc.config.Configure.Generative.ollama(
+                api_endpoint="http://ollama:11434",
+                model="llama3.1:latest"
+            )
+        )
+
+        # tmp
+        # client.collections.delete("Thought")
+
+        # try:
+        #     client.collections.get("Thought")
+        #     collection_exists = True
+        # except:
+        #     collection_exists = False
+
+        # if not collection_exists:
+        #     client.collections.create(
+        #         name="Thought",
+        #         properties=[
+        #             wc.Property(name="thought_id", data_type=wc.DataType.TEXT),
+        #             wc.Property(name="content", data_type=wc.DataType.TEXT),
+        #         ],
+        #         vectorizer_config=[
+        #             wc.Configure.Vectorizer.text2vec_ollama(
+        #                 vectorize_collection_name="Thought",
+        #                 model='nomic-embed-text',
+        #                 api_endpoint='http://ollama:11434',
+        #             ),
+        #             wc.Configure.NamedVectors.text2vec_ollama(
+        #                 vectorize_collection_name="Thought",
+        #                 name="content_vector",
+        #                 source_properties=["content"],
+        #                 model="nomic-embed-text",
+        #                 api_endpoint="http://ollama:11434"
+        #             )
+        #         ],
+        #         generative_config=[
+        #             wc.Configure.Generative.ollama(
+        #                 api_endpoint='http://ollama:11434',
+        #                 model='llama3.1:latest'
+        #             )]
+        #     )
 
     def get_client(self):
-        
-        self._configure_ollama_embedding()
 
-        return weaviate.connect_to_local(
+        client = weaviate.connect_to_local(
             host=os.getenv("WEAVIATE_HOST", "localhost"),
             port=int(os.getenv("WEAVIATE_PORT", "8080")),
             headers=self.headers,
@@ -43,35 +101,6 @@ class WeaviateDB:
             skip_init_checks=True
         )
 
-    def _configure_ollama_embedding(self):
-        """Configure environment variables for Ollama embedding integration"""
+        self._init_thought_schema(client)
 
-        os.environ.setdefault(
-            "ENABLE_MODULES",
-            os.getenv("OLLAMA_TEXT2VEC_MODEL")
-        )
-
-        os.environ.setdefault(
-            "DEFAULT_VECTORIZER_MODULE",
-            os.getenv("OLLAMA_TEXT2VEC_MODEL")
-        )
-
-        os.environ.setdefault(
-            "OLLAMA_BASE_URL",
-            os.getenv("OLLAMA_BASE_URL")
-        )
-
-        os.environ.setdefault(
-            "OLLAMA_MODEL",
-            os.getenv("OLLAMA_MODEL")
-        )
-
-        os.environ.setdefault(
-            "OLLAMA_INCLUDE_VECTOR",
-            "true"
-        )
-
-        os.environ.setdefault(
-            "OLLAMA_VECTOR_DIMENSION",
-            "4096"
-        )
+        return client

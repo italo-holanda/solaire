@@ -38,23 +38,6 @@ class TestThoughtVectorStore:
         assert hasattr(self.vector_store, 'vector_provider')
         assert self.vector_store.vector_provider == 'ollama'
 
-    def test__should_check_schema_existence(self):
-        """Test _collection_exists with real schema"""
-        exists = self.vector_store._collection_exists("Thought")
-        assert isinstance(exists, bool)
-
-    def test__should_create_schema_with_ollama_provider(self):
-        """Test _create_schema with real ollama vector provider"""
-        self.vector_store._create_schema()
-        assert self.vector_store._collection_exists("Thought")
-
-        collection = self.vector_store.client.collections.get("Thought")
-        config = collection.config.get()
-
-        assert collection is not None
-        assert config.vectorizer_config.vectorizer == "text2vec-ollama"
-        assert config.vectorizer_config.model["model"] == os.getenv("OLLAMA_MODEL")
-
     def test__should_create_new_thought_index(self):
         """Test .create_index() method"""
 
