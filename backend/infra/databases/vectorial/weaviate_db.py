@@ -1,11 +1,14 @@
 import os
-
 import weaviate
 
 from weaviate import classes as wvc
-
 from weaviate.classes.init import AdditionalConfig, Timeout
 from weaviate.classes.config import Property, DataType
+from weaviate.collections import Collection
+
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 class WeaviateDB:
@@ -33,13 +36,15 @@ class WeaviateDB:
                 raise ValueError("WEAVIATE_API_KEY env var is required")
             return {"X-OpenAI-Api-Key": api_key}
         else:
-            return {"X-Ollama-BaseURL": 'http://ollama:11434'}
+            return {"X-Ollama-BaseURL": os.getenv('OLLAMA_BASE_URL')}
 
     def _init_thought_schema(self, client: weaviate.WeaviateClient):
 
+        client.collections.delete("Thought")
+
         try:
-            client.collections.get("Thought")
-            collection_exists = True
+            collection = client.collections.get("Thought")
+            collection_exists = collection.exists()
         except:
             collection_exists = False
 
@@ -51,12 +56,12 @@ class WeaviateDB:
                     Property(name="content", data_type=DataType.TEXT),
                 ],
                 vectorizer_config=wvc.config.Configure.Vectorizer.text2vec_ollama(
-                    api_endpoint="http://ollama:11434",
-                    model="nomic-embed-text"
+                    api_endpoint=os.getenv('OLLAMA_BASE_URL'),
+                    model=os.getenv('OLLAMA_TEXT2VEC_MODEL')
                 ),
                 generative_config=wvc.config.Configure.Generative.ollama(
-                    api_endpoint="http://ollama:11434",
-                    model="llama3.1:latest"
+                    api_endpoint=os.getenv('OLLAMA_BASE_URL'),
+                    model=os.getenv('OLLAMA_MODEL')
                 )
             )
 
