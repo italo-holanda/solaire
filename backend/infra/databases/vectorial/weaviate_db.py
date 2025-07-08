@@ -37,59 +37,28 @@ class WeaviateDB:
 
     def _init_thought_schema(self, client: weaviate.WeaviateClient):
 
-        client.collections.delete("Thought")
-        client.collections.create(
-            name="Thought",
-            properties=[
-                Property(name="thought_id", data_type=DataType.TEXT),
-                Property(name="content", data_type=DataType.TEXT),
-            ],
-            vectorizer_config=wvc.config.Configure.Vectorizer.text2vec_ollama(
-                api_endpoint="http://ollama:11434",
-                model="nomic-embed-text"
-            ),
-            generative_config=wvc.config.Configure.Generative.ollama(
-                api_endpoint="http://ollama:11434",
-                model="llama3.1:latest"
+        try:
+            client.collections.get("Thought")
+            collection_exists = True
+        except:
+            collection_exists = False
+
+        if not collection_exists:
+            client.collections.create(
+                name="Thought",
+                properties=[
+                    Property(name="thought_id", data_type=DataType.TEXT),
+                    Property(name="content", data_type=DataType.TEXT),
+                ],
+                vectorizer_config=wvc.config.Configure.Vectorizer.text2vec_ollama(
+                    api_endpoint="http://ollama:11434",
+                    model="nomic-embed-text"
+                ),
+                generative_config=wvc.config.Configure.Generative.ollama(
+                    api_endpoint="http://ollama:11434",
+                    model="llama3.1:latest"
+                )
             )
-        )
-
-        # tmp
-        # client.collections.delete("Thought")
-
-        # try:
-        #     client.collections.get("Thought")
-        #     collection_exists = True
-        # except:
-        #     collection_exists = False
-
-        # if not collection_exists:
-        #     client.collections.create(
-        #         name="Thought",
-        #         properties=[
-        #             wc.Property(name="thought_id", data_type=wc.DataType.TEXT),
-        #             wc.Property(name="content", data_type=wc.DataType.TEXT),
-        #         ],
-        #         vectorizer_config=[
-        #             wc.Configure.Vectorizer.text2vec_ollama(
-        #                 vectorize_collection_name="Thought",
-        #                 model='nomic-embed-text',
-        #                 api_endpoint='http://ollama:11434',
-        #             ),
-        #             wc.Configure.NamedVectors.text2vec_ollama(
-        #                 vectorize_collection_name="Thought",
-        #                 name="content_vector",
-        #                 source_properties=["content"],
-        #                 model="nomic-embed-text",
-        #                 api_endpoint="http://ollama:11434"
-        #             )
-        #         ],
-        #         generative_config=[
-        #             wc.Configure.Generative.ollama(
-        #                 api_endpoint='http://ollama:11434',
-        #                 model='llama3.1:latest'
-        #             )]
-        #     )
 
     def get_client(self):
 
