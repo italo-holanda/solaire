@@ -4,16 +4,16 @@ services:
   weaviate:
     image: semitechnologies/weaviate:latest
     ports:
-      - "8080:8080"
+      - "${WEAVIATE_PORT:-8080}:${WEAVIATE_PORT:-8080}"
     environment:
       - QUERY_DEFAULTS_LIMIT=25
-      - AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED=true
+      - AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED=${WEAVIATE_ANONYMOUS_ACCESS}
       - PERSISTENCE_DATA_PATH=/var/lib/weaviate
       - DEFAULT_VECTORIZER_MODULE=text2vec-ollama
       - ENABLE_MODULES=text2vec-ollama
       - CLUSTER_HOSTNAME=node1
-      - TEXT2VEC_OLLAMA_MODEL=nomic-embed-text
-      - OLLAMA_HOST=http://ollama:11434
+      - TEXT2VEC_OLLAMA_MODEL=${OLLAMA_TEXT2VEC_MODEL}
+      - OLLAMA_HOST=${OLLAMA_BASE_URL}
     depends_on:
       - ollama
     networks:
@@ -31,7 +31,7 @@ services:
       /bin/sh -c "
       ollama serve & 
       sleep 5 &&
-      ollama pull nomic-embed-text &&
+      ollama pull ${OLLAMA_TEXT2VEC_MODEL} &&
       wait
       "
 
