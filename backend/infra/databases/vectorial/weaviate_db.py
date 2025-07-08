@@ -37,9 +37,12 @@ class WeaviateDB:
         else:
             return {"X-Ollama-BaseURL": os.getenv('OLLAMA_BASE_URL')}
 
-    def _init_thought_schema(self, client: weaviate.WeaviateClient):
-
+    def _delete_thought_schema(self):
+        client = self.get_client()
         client.collections.delete("Thought")
+        client.close()
+
+    def _init_thought_schema(self, client: weaviate.WeaviateClient):
 
         try:
             collection = client.collections.get("Thought")
