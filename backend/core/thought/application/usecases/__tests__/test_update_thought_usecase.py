@@ -69,7 +69,23 @@ class TestUpdateThoughtUsecase:
         thought_id = faker.uuid4()
         short_text = "Short text"
 
-        with pytest.raises(ValueError, match="Text must be >= 100 and <= 1000"):
+        thought = Thought(
+            id = thought_id,
+            text = faker.text(max_nb_chars=300),
+            categories=[],
+            summary="Example of summary",
+            title="Example of title",
+            embeddings=[]
+        )
+
+        self.dependencies["thought_repository"].get_by_id.return_value = thought
+        self.dependencies["summary_generator"].generate.return_value = "New summary"
+        self.dependencies["title_generator"].generate.return_value = "New title"
+        self.dependencies["categories_extractor"].extract.return_value = [
+            "Category1"
+        ]
+
+        with pytest.raises(ValueError):
             self.usecase.execute(
                 UpdateThoughtDTO(
                     thought_id=thought_id,
@@ -81,7 +97,23 @@ class TestUpdateThoughtUsecase:
         thought_id = faker.uuid4()
         long_text = "Very long text " * 100  # More than 1000 characters
 
-        with pytest.raises(ValueError, match="Text must be >= 100 and <= 1000"):
+        thought = Thought(
+            id = thought_id,
+            text = faker.text(max_nb_chars=300),
+            categories=[],
+            summary="Example of summary",
+            title="Example of title",
+            embeddings=[]
+        )
+
+        self.dependencies["thought_repository"].get_by_id.return_value = thought
+        self.dependencies["summary_generator"].generate.return_value = "New summary"
+        self.dependencies["title_generator"].generate.return_value = "New title"
+        self.dependencies["categories_extractor"].extract.return_value = [
+            "Category1"
+        ]
+
+        with pytest.raises(ValueError):
             self.usecase.execute(
                 UpdateThoughtDTO(
                     thought_id=thought_id,
@@ -109,7 +141,9 @@ class TestUpdateThoughtUsecase:
         )
 
         self.dependencies["thought_repository"].update \
-            .assert_called_once_with(thought_id, valid_text)
+            .assert_called_once_with(thought)
+        
+        assert thought.text == valid_text
 
     def test__should_regenerate_summary_title_and_categories(self):
         thought_id = faker.uuid4()
@@ -157,7 +191,7 @@ class TestUpdateThoughtUsecase:
         )
 
         self.dependencies["thought_repository"].update \
-            .assert_called_once_with(thought_id, valid_text)
+            .assert_called_once_with(thought)
         self.dependencies["thought_vector_store"].delete_index \
             .assert_called_once_with(thought)
         self.dependencies["thought_vector_store"].create_index \

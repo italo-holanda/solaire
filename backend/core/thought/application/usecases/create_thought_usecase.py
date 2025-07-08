@@ -30,11 +30,6 @@ class CreateThoughtUsecase ():
 
     def execute(self, dto: CreateThoughtDTO):
 
-        if not dto.text:
-            raise ValueError("Thought text is required")
-        if len(remove_extra_spaces(dto.text)) <= 100 or len(remove_extra_spaces(dto.text)) > 1000:
-            raise ValueError('Text must be >= 100 and <= 1000')
-
         thought = Thought(
             text=dto.text,
             summary='',

@@ -23,5 +23,5 @@ class ThoughtRepositoryInterface(ABC):
         pass
 
     @abstractmethod
-    def update(id: str, text: str) -> None:
+    def update(thought: Thought) -> None:
         pass

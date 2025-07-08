@@ -1,6 +1,5 @@
 from pydantic import BaseModel
 
-from backend.core.common.domain.util import remove_extra_spaces
 from backend.core.thought.domain.repositories.thought_repository import ThoughtRepositoryInterface
 from backend.core.thought.domain.repositories.thought_vector_store import ThoughtVectorStoreInterface
 from backend.core.category.domain.services.categories_extractor import CategoriesExtractor
@@ -35,13 +34,14 @@ class UpdateThoughtUsecase ():
             raise ValueError("Thought not found")
         if not dto.text:
             raise ValueError("Thought text is required")
-        if len(remove_extra_spaces(dto.text)) <= 100 or len(remove_extra_spaces(dto.text)) > 1000:
-            raise ValueError('Text must be >= 100 and <= 1000')
 
         thought.summary = self.summary_generator.generate(thought)
         thought.title = self.title_generator.generate(thought)
         thought.categories = self.categories_extractor.extract(thought)
+        thought.text = dto.text
 
-        self.thought_repository.update(thought.id, thought.text)
+        print('HELLO MOTO')
+
+        self.thought_repository.update(thought)
         self.thought_vector_store.delete_index(thought)
         self.thought_vector_store.create_index(thought)

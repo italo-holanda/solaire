@@ -7,6 +7,7 @@ from backend.core.category.domain.entities.category import Category
 
 faker = Faker()
 
+
 class TestThought(unittest.TestCase):
     def make_category(self):
         return Category(
@@ -19,9 +20,11 @@ class TestThought(unittest.TestCase):
         id = str(uuid4())
         title = faker.sentence(nb_words=6)
         summary = faker.sentence(nb_words=12)
-        text = faker.text(max_nb_chars=200) + (" lorem ipsum" * 10)  # ensure >100 chars
+        text = faker.text(max_nb_chars=200) + \
+            (" lorem ipsum" * 10)  # ensure >100 chars
         categories = [self.make_category() for _ in range(2)]
-        embeddings = [faker.pyfloat(left_digits=1, right_digits=5) for _ in range(5)]
+        embeddings = [faker.pyfloat(left_digits=1, right_digits=5)
+                      for _ in range(5)]
 
         # Passing id
         thought = Thought(
@@ -85,5 +88,25 @@ class TestThought(unittest.TestCase):
                 embeddings=[0.1, 0.2]
             )
 
+    def test__text_must_be_validated_when_updated(self):
+        thought = Thought(
+            title=faker.sentence(),
+            summary=faker.sentence(),
+            text=faker.text(max_nb_chars=200) + (" lorem ipsum" * 10),
+            categories=[self.make_category()],
+            embeddings=[0.1, 0.2]
+        )
+
+        with self.assertRaises(ValueError):
+            thought.text = "short text"
+
+        with self.assertRaises(ValueError):
+            thought.text = "a" * 1001
+
+        valid_text = faker.text(max_nb_chars=200) + (" lorem ipsum" * 10)
+        thought.text = valid_text
+        self.assertEqual(thought.text, valid_text)
+
+
 if __name__ == "__main__":
-    unittest.main() 
+    unittest.main()

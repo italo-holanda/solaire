@@ -6,6 +6,9 @@ from pydantic import field_validator
 
 
 class Thought(Entity):
+    model_config = {
+        "validate_assignment": True
+    }
     title: str
     summary: str
     text: str
