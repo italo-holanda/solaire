@@ -4,7 +4,6 @@ import weaviate
 from weaviate import classes as wvc
 from weaviate.classes.init import AdditionalConfig, Timeout
 from weaviate.classes.config import Property, DataType
-from weaviate.collections import Collection
 
 from dotenv import load_dotenv
 
