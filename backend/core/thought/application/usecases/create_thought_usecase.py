@@ -1,5 +1,6 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
+from backend.core.common.domain.exceptions.application_exception import ApplicationException
 from backend.core.thought.domain.entities.thought import Thought
 from backend.core.thought.domain.repositories.thought_repository import ThoughtRepositoryInterface
 from backend.core.thought.domain.repositories.thought_vector_store import ThoughtVectorStoreInterface
@@ -23,13 +24,16 @@ class CreateThoughtUsecase ():
 
     def execute(self, dto: CreateThoughtDTO):
 
-        thought = Thought(
-            text=dto.text,
-            summary='',
-            title='',
-            categories=[],
-            embeddings=[]
-        )
+        try:
+            thought = Thought(
+                text=dto.text,
+                summary='',
+                title='',
+                categories=[],
+                embeddings=[]
+            )
+        except ValidationError:
+            raise ApplicationException('Invalid thought object', 400)
 
         interpreter_output = self.thought_interpreter.invoke(thought)
 

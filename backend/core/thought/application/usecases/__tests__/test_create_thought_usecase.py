@@ -3,6 +3,7 @@ from faker import Faker
 from pydantic import ValidationError
 import pytest
 
+from backend.core.common.domain.exceptions.application_exception import ApplicationException
 from backend.core.thought.application.usecases.create_thought_usecase import CreateThoughtDTO, CreateThoughtUsecase
 from backend.core.thought.domain.services.thought_interpreter import ThoughtInterpreterOutput
 
@@ -38,13 +39,13 @@ class TestCreateThoughtUsecase:
             self.usecase.execute(CreateThoughtDTO(text=None))
 
     def test__should_throw_error_when_text_is_lower_than_100_chars(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(ApplicationException):
             self.usecase.execute(CreateThoughtDTO(text=""))
-        with pytest.raises(ValueError):
+        with pytest.raises(ApplicationException):
             self.usecase.execute(CreateThoughtDTO(text="Lorem Ipsum"))
-        with pytest.raises(ValueError):
+        with pytest.raises(ApplicationException):
             self.usecase.execute(CreateThoughtDTO(text=" " * 100 + " Hello"))
-        with pytest.raises(ValueError):
+        with pytest.raises(ApplicationException):
             self.usecase.execute(CreateThoughtDTO(
                 text=f"Hello {" " * 100}, how are you?"))
 
@@ -55,7 +56,7 @@ class TestCreateThoughtUsecase:
                 text += " " + faker.text(max_nb_chars=200)
             return text.strip()
 
-        with pytest.raises(ValueError):
+        with pytest.raises(ApplicationException):
             self.usecase.execute(CreateThoughtDTO(text=get_1001_chars_text()))
 
     def test__should_save_thought_when_text_is_valid(self):
