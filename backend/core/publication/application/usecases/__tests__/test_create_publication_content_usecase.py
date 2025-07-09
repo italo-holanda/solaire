@@ -2,6 +2,7 @@ import pytest
 from unittest.mock import Mock
 from faker import Faker
 
+from backend.core.common.domain.exceptions.application_exception import ApplicationException
 from core.publication.application.usecases.create_publication_content_usecase import (
     CreatePublicationContentDTO, CreatePublicationContentUsecase
 )
@@ -81,7 +82,7 @@ class TestCreatePublicationContentUsecase:
             publication_id=publication_id,
             publication_outlining="Some outlining"
         )
-        with pytest.raises(ValueError, match="Publication not found"):
+        with pytest.raises(ApplicationException, match="Publication not found"):
             self.usecase.execute(dto)
         self.dependencies["publication_repository"].get_by_id \
             .assert_called_once_with(publication_id)

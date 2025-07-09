@@ -3,6 +3,7 @@ import pytest
 from unittest.mock import Mock
 from faker import Faker
 
+from backend.core.common.domain.exceptions.application_exception import ApplicationException
 from backend.core.thought.application.usecases.update_thought_usecase import UpdateThoughtDTO, UpdateThoughtUsecase
 from backend.core.thought.domain.entities.thought import Thought
 
@@ -43,7 +44,7 @@ class TestUpdateThoughtUsecase:
         thought_id = faker.uuid4()
         self.dependencies["thought_repository"].get_by_id.return_value = None
 
-        with pytest.raises(ValueError, match="Thought not found"):
+        with pytest.raises(ApplicationException, match="Thought not found"):
             self.usecase.execute(
                 UpdateThoughtDTO(
                     thought_id=thought_id,
@@ -57,7 +58,7 @@ class TestUpdateThoughtUsecase:
     def test__should_throw_error_when_text_is_empty(self):
         thought_id = faker.uuid4()
 
-        with pytest.raises(ValueError, match="Thought text is required"):
+        with pytest.raises(ApplicationException, match="Thought text is required"):
             self.usecase.execute(
                 UpdateThoughtDTO(
                     thought_id=thought_id,
@@ -85,7 +86,7 @@ class TestUpdateThoughtUsecase:
             "Category1"
         ]
 
-        with pytest.raises(ValueError):
+        with pytest.raises(ApplicationException):
             self.usecase.execute(
                 UpdateThoughtDTO(
                     thought_id=thought_id,
@@ -113,7 +114,7 @@ class TestUpdateThoughtUsecase:
             "Category1"
         ]
 
-        with pytest.raises(ValueError):
+        with pytest.raises(ApplicationException):
             self.usecase.execute(
                 UpdateThoughtDTO(
                     thought_id=thought_id,

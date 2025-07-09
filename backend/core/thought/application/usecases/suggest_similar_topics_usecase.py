@@ -1,6 +1,7 @@
 from typing import List
 from pydantic import BaseModel
 
+from backend.core.common.domain.exceptions.application_exception import ApplicationException
 from backend.core.thought.application.usecases.list_related_thoughts_usecase import ListRelatedThoughtsUsecase
 from backend.core.thought.domain.repositories.thought_repository import ThoughtRepositoryInterface
 from backend.core.thought.domain.services.thought_topic_suggester import ThoughtTopicSuggester
@@ -25,7 +26,7 @@ class SuggestSimilarTopicsUsecase:
         main_thought = self.thought_repository.get_by_id(dto.thought_id)
 
         if not main_thought:
-            raise ValueError("Thought not found")
+            raise ApplicationException("Thought not found", 404)
 
         similar_thoughts = self.list_related_thoughts_usecase \
             .execute(dto)

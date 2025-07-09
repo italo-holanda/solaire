@@ -1,6 +1,7 @@
 from typing import List
 from pydantic import BaseModel
 
+from backend.core.common.domain.exceptions.application_exception import ApplicationException
 from backend.core.publication.domain.entities.publication import Publication, PublicationFormat
 from backend.core.publication.domain.repositories.publication_repository import PublicationRepositoryInterface
 from backend.core.publication.domain.services.publication_outlining_generator import PublicationOutliningGenerator
@@ -33,7 +34,7 @@ class CreatePublicationPreviewUsecase ():
                 thoughts.append(thought)
 
         if len(thoughts) == 0:
-            raise ValueError("No thoughts found")
+            raise ApplicationException("No thoughts found", 404)
 
         outlining = self.outlining_generator.generate(
             thoughts,

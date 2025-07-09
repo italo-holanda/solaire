@@ -2,6 +2,7 @@ import pytest
 from unittest.mock import Mock
 from faker import Faker
 
+from backend.core.common.domain.exceptions.application_exception import ApplicationException
 from core.publication.application.usecases.create_publication_preview_usecase import (
     CreatePublicationPreviewDTO, CreatePublicationPreviewUsecase
 )
@@ -88,7 +89,7 @@ class TestCreatePublicationPreviewUsecase:
             user_guideline="Any guideline"
         )
 
-        with pytest.raises(ValueError, match="No thoughts found"):
+        with pytest.raises(ApplicationException, match="No thoughts found"):
             self.usecase.execute(dto)
 
         calls = [((tid,),) for tid in thought_ids]

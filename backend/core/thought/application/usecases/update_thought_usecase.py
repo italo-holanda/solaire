@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+from backend.core.common.domain.exceptions.application_exception import ApplicationException
 from backend.core.thought.domain.repositories.thought_repository import ThoughtRepositoryInterface
 from backend.core.thought.domain.repositories.thought_vector_store import ThoughtVectorStoreInterface
 from backend.core.category.domain.services.categories_extractor import CategoriesExtractor
@@ -31,16 +32,17 @@ class UpdateThoughtUsecase ():
         thought = self.thought_repository.get_by_id(dto.thought_id)
 
         if not thought:
-            raise ValueError("Thought not found")
+            raise ApplicationException("Thought not found", 404)
         if not dto.text:
-            raise ValueError("Thought text is required")
+            raise ApplicationException("Thought text is required", 400)
 
-        thought.summary = self.summary_generator.generate(thought)
-        thought.title = self.title_generator.generate(thought)
-        thought.categories = self.categories_extractor.extract(thought)
-        thought.text = dto.text
-
-        print('HELLO MOTO')
+        try:
+            thought.summary = self.summary_generator.generate(thought)
+            thought.title = self.title_generator.generate(thought)
+            thought.categories = self.categories_extractor.extract(thought)
+            thought.text = dto.text
+        except ValueError:
+            raise ApplicationException('Invalid thought', 400)
 
         self.thought_repository.update(thought)
         self.thought_vector_store.delete_index(thought)

@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+from backend.core.common.domain.exceptions.application_exception import ApplicationException
 from backend.core.publication.domain.entities.publication import Publication, PublicationFormat
 from backend.core.publication.domain.repositories.publication_repository import PublicationRepositoryInterface
 from backend.core.publication.domain.services.publication_content_generator import PublicationContentGenerator
@@ -30,7 +31,7 @@ class CreatePublicationContentUsecase ():
         publication = self.publication_repository.get_by_id(dto.publication_id)
 
         if not publication:
-            raise ValueError("Publication not found")
+            raise ApplicationException("Publication not found", 404)
 
         thoughts = []
         for thought_id in publication.thought_ids:
@@ -44,9 +45,12 @@ class CreatePublicationContentUsecase ():
             outlining=publication.outlining
         )
 
-        publication.title = self.content_generator.generate(content)
-        publication.content = content
-        publication.stage = "ready"
+        try:
+            publication.title = self.content_generator.generate(content)
+            publication.content = content
+            publication.stage = "ready"
+        except ValueError:
+            raise ApplicationException('Invalid publication', 400)
 
         self.publication_repository.update(publication)
 
