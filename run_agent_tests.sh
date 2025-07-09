@@ -3,7 +3,10 @@
 # Test LLM functions
 
 echo "Starting agents (LLM's) tests..."
-echo "[WARN] - This may take a long time."
+
+echo "----------------------------------------------"
+echo "⚠️ - [WARNING!] - THIS MAY TAKE A LONG TIME ⌛️"
+echo "----------------------------------------------"
 
 if [ -f .env ]; then
   set -a
@@ -24,4 +27,4 @@ export PYTHONPATH="${PROJECT_ROOT}:${PYTHONPATH}"
 
 pytest -vv backend/infra/agents "$@"  
 
-echo "Integration tests completed!" 
+echo "Agent tests completed!" 
