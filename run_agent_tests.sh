@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Test LLM functions
+
+echo "Starting agents (LLM's) tests..."
+echo "[WARN] - This may take a long time."
+
+if [ -f .env ]; then
+  set -a
+  source .env
+  set +a
+  echo "Loaded environment variables from .env file."
+else
+  echo ".env file not found. Using default environment variables."
+fi
+
+echo "Environment:"
+echo "  OLLAMA_MODEL: $OLLAMA_MODEL"
+echo ""
+
+PROJECT_ROOT="backend"
+
+export PYTHONPATH="${PROJECT_ROOT}:${PYTHONPATH}"
+
+pytest -vv backend/infra/agents "$@"  
+
+echo "Integration tests completed!" 
