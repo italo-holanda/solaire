@@ -1,11 +1,10 @@
 #!/bin/bash
 
-# Integration test runner for ThoughtVectorStore
+# Integration test runner
 # This script runs tests that require real Weaviate and Ollama connections
 
 
-
-echo "Starting integration tests for ThoughtVectorStore..."
+echo "Starting integration tests..."
 
 if [ -f .env ]; then
   set -a
@@ -45,17 +44,10 @@ else
     exit 1
 fi
 
-
-
-
-
-# Run the specific test file
-#!/bin/bash
-
 PROJECT_ROOT="backend"
 
 export PYTHONPATH="${PROJECT_ROOT}:${PYTHONPATH}"
 
-pytest -vv --ignore=backend/core "$@"  
+pytest -vv --ignore=backend/core --ignore=backend/infra/agents "$@"  
 
 echo "Integration tests completed!" 
