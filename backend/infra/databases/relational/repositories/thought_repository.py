@@ -116,11 +116,11 @@ class ThoughtRepository(ThoughtRepositoryInterface):
             self.db = next(get_db())
 
         thought_model = self.db.query(ThoughtModel).filter(
-            ThoughtModel.id == id
+            ThoughtModel.id == thought.id
         ).first()
 
         if not thought_model:
-            raise ValueError(f"Thought with id {id} not found")
+            raise ValueError(f"Thought with id {thought.id} not found")
 
         thought_model.text = thought.text
         self.db.commit()
