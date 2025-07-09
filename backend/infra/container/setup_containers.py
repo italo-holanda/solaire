@@ -1,3 +1,4 @@
+from backend.core.thought.domain.repositories.thought_vector_store import ThoughtVectorStoreInterface
 from backend.infra.container.container import Container
 
 from backend.core.category.domain.repositories.category_repository import CategoryRepositoryInterface
@@ -7,6 +8,7 @@ from backend.core.thought.domain.repositories.thought_repository import ThoughtR
 from backend.infra.databases.relational.repositories.category_repository import CategoryRepository
 from backend.infra.databases.relational.repositories.publication_repository import PublicationRepository
 from backend.infra.databases.relational.repositories.thought_repository import ThoughtRepository
+from backend.infra.databases.vectorial.thought_vector_store import ThoughtVectorStore
 
 
 def setup_di_container():
@@ -16,3 +18,4 @@ def setup_di_container():
     Container.register(CategoryRepositoryInterface, CategoryRepository)
     Container.register(ThoughtRepositoryInterface, ThoughtRepository)
     Container.register(PublicationRepositoryInterface, PublicationRepository)
+    Container.register(ThoughtVectorStoreInterface, ThoughtVectorStore)
