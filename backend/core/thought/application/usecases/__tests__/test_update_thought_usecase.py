@@ -6,6 +6,7 @@ from faker import Faker
 from backend.core.common.domain.exceptions.application_exception import ApplicationException
 from backend.core.thought.application.usecases.update_thought_usecase import UpdateThoughtDTO, UpdateThoughtUsecase
 from backend.core.thought.domain.entities.thought import Thought
+from backend.core.thought.domain.services.thought_interpreter import ThoughtInterpreterOutput
 
 faker = Faker()
 
@@ -15,19 +16,15 @@ class TestUpdateThoughtUsecase:
     @pytest.fixture(autouse=True)
     def setup(self):
         self.dependencies = {
-            "summary_generator": Mock(),
-            "title_generator": Mock(),
-            "categories_extractor": Mock(),
+            "thought_interpreter": Mock(),
             "thought_repository": Mock(),
             "thought_vector_store": Mock()
         }
 
         self.usecase = UpdateThoughtUsecase(
-            summary_generator=self.dependencies.get('summary_generator'),
-            title_generator=self.dependencies.get('title_generator'),
-            categories_extractor=self.dependencies.get('categories_extractor'),
+            thought_interpreter=self.dependencies.get('thought_interpreter'),
             thought_repository=self.dependencies.get('thought_repository'),
-            thought_vector_store=self.dependencies.get('thought_vector_store')
+            thought_vector_store=self.dependencies.get('thought_vector_store'),
         )
 
         """
@@ -71,8 +68,8 @@ class TestUpdateThoughtUsecase:
         short_text = "Short text"
 
         thought = Thought(
-            id = thought_id,
-            text = faker.text(max_nb_chars=300),
+            id=thought_id,
+            text=faker.text(max_nb_chars=300),
             categories=[],
             summary="Example of summary",
             title="Example of title",
@@ -80,11 +77,12 @@ class TestUpdateThoughtUsecase:
         )
 
         self.dependencies["thought_repository"].get_by_id.return_value = thought
-        self.dependencies["summary_generator"].generate.return_value = "New summary"
-        self.dependencies["title_generator"].generate.return_value = "New title"
-        self.dependencies["categories_extractor"].extract.return_value = [
-            "Category1"
-        ]
+
+        self.dependencies["thought_interpreter"].invoke.return_value = ThoughtInterpreterOutput(
+            categories=[],
+            summary="Example of summary ......",
+            title="Example of title ......"
+        )
 
         with pytest.raises(ApplicationException):
             self.usecase.execute(
@@ -99,8 +97,8 @@ class TestUpdateThoughtUsecase:
         long_text = "Very long text " * 100  # More than 1000 characters
 
         thought = Thought(
-            id = thought_id,
-            text = faker.text(max_nb_chars=300),
+            id=thought_id,
+            text=faker.text(max_nb_chars=300),
             categories=[],
             summary="Example of summary",
             title="Example of title",
@@ -108,11 +106,11 @@ class TestUpdateThoughtUsecase:
         )
 
         self.dependencies["thought_repository"].get_by_id.return_value = thought
-        self.dependencies["summary_generator"].generate.return_value = "New summary"
-        self.dependencies["title_generator"].generate.return_value = "New title"
-        self.dependencies["categories_extractor"].extract.return_value = [
-            "Category1"
-        ]
+        self.dependencies["thought_interpreter"].invoke.return_value = ThoughtInterpreterOutput(
+            categories=[],
+            summary="Example of summary ......",
+            title="Example of title ......"
+        )
 
         with pytest.raises(ApplicationException):
             self.usecase.execute(
@@ -131,19 +129,19 @@ class TestUpdateThoughtUsecase:
         thought.text = valid_text
 
         self.dependencies["thought_repository"].get_by_id.return_value = thought
-        self.dependencies["summary_generator"].generate.return_value = "New summary"
-        self.dependencies["title_generator"].generate.return_value = "New title"
-        self.dependencies["categories_extractor"].extract.return_value = [
-            "Category1"
-        ]
-
+        self.dependencies["thought_interpreter"].invoke.return_value = ThoughtInterpreterOutput(
+            categories=[],
+            summary="Example of summary ......",
+            title="Example of title ......"
+        )
+        
         self.usecase.execute(
             UpdateThoughtDTO(thought_id=thought_id, text=valid_text)
         )
 
         self.dependencies["thought_repository"].update \
             .assert_called_once_with(thought)
-        
+
         assert thought.text == valid_text
 
     def test__should_regenerate_summary_title_and_categories(self):
@@ -155,21 +153,17 @@ class TestUpdateThoughtUsecase:
         thought.text = valid_text
 
         self.dependencies["thought_repository"].get_by_id.return_value = thought
-        self.dependencies["summary_generator"].generate.return_value = "New summary"
-        self.dependencies["title_generator"].generate.return_value = "New title"
-        self.dependencies["categories_extractor"].extract.return_value = [
-            "Category1"
-        ]
+        self.dependencies["thought_interpreter"].invoke.return_value = ThoughtInterpreterOutput(
+            categories=[],
+            summary="Example of summary ......",
+            title="Example of title ......"
+        )
 
         self.usecase.execute(
             UpdateThoughtDTO(thought_id=thought_id, text=valid_text)
         )
 
-        self.dependencies["summary_generator"].generate \
-            .assert_called_once_with(thought)
-        self.dependencies["title_generator"].generate \
-            .assert_called_once_with(thought)
-        self.dependencies["categories_extractor"].extract \
+        self.dependencies["thought_interpreter"].invoke \
             .assert_called_once_with(thought)
 
     def test__should_update_repository_and_vector_store(self):
@@ -181,11 +175,12 @@ class TestUpdateThoughtUsecase:
         thought.text = valid_text
 
         self.dependencies["thought_repository"].get_by_id.return_value = thought
-        self.dependencies["summary_generator"].generate.return_value = "New summary"
-        self.dependencies["title_generator"].generate.return_value = "New title"
-        self.dependencies["categories_extractor"].extract.return_value = [
-            "Category1"
-        ]
+        self.dependencies["thought_interpreter"].invoke.return_value = ThoughtInterpreterOutput(
+            categories=[],
+            summary="Example of summary ......",
+            title="Example of title ......"
+        )
+
 
         self.usecase.execute(
             UpdateThoughtDTO(thought_id=thought_id, text=valid_text)

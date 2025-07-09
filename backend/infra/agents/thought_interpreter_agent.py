@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field
 
 from backend.core.category.domain.entities.category import Category
 from backend.core.thought.domain.entities.thought import Thought
+from backend.core.thought.domain.services.thought_interpreter import ThoughtInterpreterInterface, ThoughtInterpreterOutput
 
 
 AgentRoute = Literal[
@@ -43,7 +44,7 @@ class CategoriesOutput(BaseModel):
     )
 
 
-class ThoughtInterpreterAgent:
+class ThoughtInterpreterAgent(ThoughtInterpreterInterface):
     """
     ThoughtInterpreterAgent
     ---
@@ -129,6 +130,7 @@ class ThoughtInterpreterAgent:
         return {'categories': categories_entities}
 
     def invoke(self, thought: Thought) -> Dict:
-        return self.graph.invoke(
+        result = self.graph.invoke(
             AgentState(**thought.model_dump(), route=None)
         )
+        return ThoughtInterpreterOutput(**result)

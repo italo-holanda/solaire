@@ -1,7 +1,6 @@
-import json
 from typing import List
 import unittest
-from unittest.mock import patch, MagicMock
+
 from backend.infra.agents.thought_interpreter_agent import ThoughtInterpreterAgent
 from backend.core.thought.domain.entities.thought import Thought
 from backend.core.category.domain.entities.category import Category
@@ -89,14 +88,9 @@ class TestThoughtInterpreterAgent(unittest.TestCase):
         )
 
         interpreted_thought = self.agent.invoke(thought)
-
-        print('\n-------------')
-        print(interpreted_thought)
-        print('\n-------------')
-
-        summary = interpreted_thought.get('summary')
-        title = interpreted_thought.get('title')
-        categories = interpreted_thought.get('categories')
+        summary = interpreted_thought.summary
+        title = interpreted_thought.title
+        categories = interpreted_thought.categories
 
         assert isinstance(summary, str)
         assert len(summary) >= 55
@@ -106,5 +100,3 @@ class TestThoughtInterpreterAgent(unittest.TestCase):
 
         assert isinstance(categories, List)
         assert isinstance(categories[0], Category)
-
-        assert thought.text == interpreted_thought.get('text')

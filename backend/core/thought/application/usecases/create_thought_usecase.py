@@ -1,12 +1,9 @@
 from pydantic import BaseModel
 
-from backend.core.common.domain.util import remove_extra_spaces
 from backend.core.thought.domain.entities.thought import Thought
 from backend.core.thought.domain.repositories.thought_repository import ThoughtRepositoryInterface
 from backend.core.thought.domain.repositories.thought_vector_store import ThoughtVectorStoreInterface
-from backend.core.category.domain.services.categories_extractor import CategoriesExtractor
-from backend.core.thought.domain.services.thought_summary_generator import ThoughtSummaryGenerator
-from backend.core.thought.domain.services.thought_title_generator import ThoughtTitleGenerator
+from backend.core.thought.domain.services.thought_interpreter import ThoughtInterpreterInterface
 
 
 class CreateThoughtDTO(BaseModel):
@@ -16,15 +13,11 @@ class CreateThoughtDTO(BaseModel):
 class CreateThoughtUsecase ():
     def __init__(
         self,
-        summary_generator: ThoughtSummaryGenerator,
-        title_generator: ThoughtTitleGenerator,
-        categories_extractor: CategoriesExtractor,
+        thought_interpreter: ThoughtInterpreterInterface,
         thought_repository: ThoughtRepositoryInterface,
         thought_vector_store: ThoughtVectorStoreInterface
     ):
-        self.summary_generator = summary_generator
-        self.title_generator = title_generator
-        self.categories_extractor = categories_extractor
+        self.thought_interpreter = thought_interpreter
         self.thought_repository = thought_repository
         self.thought_vector_store = thought_vector_store
 
@@ -38,9 +31,11 @@ class CreateThoughtUsecase ():
             embeddings=[]
         )
 
-        thought.summary = self.summary_generator.generate(thought)
-        thought.title = self.title_generator.generate(thought)
-        thought.categories = self.categories_extractor.extract(thought)
+        interpreter_output = self.thought_interpreter.invoke(thought)
+
+        thought.summary = interpreter_output.summary
+        thought.title = interpreter_output.title
+        thought.categories = interpreter_output.categories
 
         self.thought_repository.save(thought)
         self.thought_vector_store.create_index(thought)
