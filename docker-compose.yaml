@@ -33,6 +33,7 @@ services:
       ollama serve & 
       sleep 5 &&
       ollama pull ${OLLAMA_TEXT2VEC_MODEL} &&
+      ollama pull ${OLLAMA_MODEL} &&
       wait
       "
 
