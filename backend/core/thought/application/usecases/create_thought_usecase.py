@@ -1,3 +1,5 @@
+import threading
+
 from pydantic import BaseModel, ValidationError
 
 from backend.core.common.domain.exceptions.application_exception import ApplicationException
@@ -35,11 +37,17 @@ class CreateThoughtUsecase ():
         except ValidationError:
             raise ApplicationException('Invalid thought object', 400)
 
-        interpreter_output = self.thought_interpreter.invoke(thought)
-
-        thought.summary = interpreter_output.summary
-        thought.title = interpreter_output.title
-        thought.categories = interpreter_output.categories
-
         self.thought_repository.save(thought)
         self.thought_vector_store.create_index(thought)
+
+        def _async_interpret_and_update(thought):
+            interpreter_output = self.thought_interpreter.invoke(thought)
+            thought.summary = interpreter_output.summary
+            thought.title = interpreter_output.title
+            thought.categories = interpreter_output.categories
+            self.thought_repository.update(thought)
+
+        threading.Thread(
+            target=_async_interpret_and_update,
+            args=(thought,)
+        ).start()

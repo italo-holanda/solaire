@@ -31,8 +31,8 @@ async def get_thoughts(search_request: ListThoughtsDTO) -> List[Thought]:
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
-@router.post("/")
-async def create_thought(dto: CreateThoughtDTO) -> List[Thought]:
+@router.post("/", status_code=204)
+async def create_thought(dto: CreateThoughtDTO) -> None:
     """
     Create new thought
     """

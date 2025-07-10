@@ -1,4 +1,5 @@
 import os
+import logging
 
 from typing import Dict, List, Literal, Optional
 from langchain_core.messages import HumanMessage, SystemMessage
@@ -17,6 +18,18 @@ AgentRoute = Literal[
     'categories_extractor',
     'finish'
 ]
+
+
+LOG_LEVEL = os.getenv('AGENT_LOG_LEVEL', 'INFO').upper()
+logger = logging.getLogger(__name__)
+logger.setLevel(LOG_LEVEL)
+if not logger.hasHandlers():
+    handler = logging.StreamHandler()
+    formatter = logging.Formatter(
+        '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+    )
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
 
 
 class AgentState(Thought):
@@ -71,6 +84,7 @@ class ThoughtInterpreterAgent(ThoughtInterpreterInterface):
         return builder.compile()
 
     def _summary_generator(self, thought: AgentState) -> AgentState:
+        logger.debug('Calling `_summary_generator` with thought: %s', thought)
         summary_generation_prompt = """
             You will receive a block of thought written by a user. 
             Your task is to analyze the content and produce a brief, 
@@ -87,9 +101,11 @@ class ThoughtInterpreterAgent(ThoughtInterpreterInterface):
                 HumanMessage(content=thought.text)
             ]
         )
+        logger.debug(f'Summary generated: "%s"', output.summary)
         return {'summary': output.summary}
 
     def _title_generator(self, thought: AgentState) -> AgentState:
+        logger.debug('Calling `_title_generator` with thought: %s', thought)
         title_generation_prompt = """
             You are an assistant designed to analyze thought entries 
             written by the user. Carefully read the provided text and
@@ -105,9 +121,13 @@ class ThoughtInterpreterAgent(ThoughtInterpreterInterface):
                 HumanMessage(content=thought.text)
             ]
         )
+        logger.debug(f'Title generated: "%s"', output.title)
         return {'title': output.title}
 
     def _categories_extractor(self, thought: AgentState) -> AgentState:
+        logger.debug(
+            'Calling `_categories_extractor` with thought: %s', thought
+        )
         categories_extraction_prompt = """
             Analyze the following block of text written by the user. 
             Identify the main topics discussed and return a list of 
@@ -127,10 +147,15 @@ class ThoughtInterpreterAgent(ThoughtInterpreterInterface):
             categories_entities.append(
                 Category(name=category_name)
             )
+        logger.debug('Categories extracted: %s', categories_entities)
         return {'categories': categories_entities}
 
     def invoke(self, thought: Thought) -> Dict:
+        logger.info(
+            'Invoking ThoughtInterpreterAgent workflow with thought: %s', thought
+        )
         result = self.graph.invoke(
             AgentState(**thought.model_dump(), route=None)
         )
+        logger.info('Workflow result: %s', result)
         return ThoughtInterpreterOutput(**result)

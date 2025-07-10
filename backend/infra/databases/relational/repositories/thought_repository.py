@@ -123,4 +123,9 @@ class ThoughtRepository(ThoughtRepositoryInterface):
             raise ValueError(f"Thought with id {thought.id} not found")
 
         thought_model.text = thought.text
+        thought_model.summary = thought.summary
+        thought_model.title = thought.title
+        # thought_model.categories = thought.categories
+        # @TODO: fix categories insertion
+
         self.db.commit()
