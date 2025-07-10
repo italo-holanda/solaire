@@ -89,11 +89,8 @@ class ThoughtInterpreterAgent(ThoughtInterpreterInterface):
             You will receive a block of thought written by a user. 
             Your task is to analyze the content and produce a brief, 
             friendly summary in plain text, without any formatting. 
-            Highlight the key topics and noteworthy elements present 
-            in the user's writing. The summary should be concise, easy
-            to read, and should gently inform the user of the main points
-            or emotions expressed in their text, using a warm and under-
-            standing tone.
+            Return your answer as a JSON object with a single key "summary".
+            Example: {"summary": "Your summary here"}
         """
         output = self.llm.with_structured_output(SummaryOutput).invoke(
             [
