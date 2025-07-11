@@ -15,6 +15,10 @@ class CategoryRepositoryInterface(ABC):
         pass
 
     @abstractmethod
+    def get_by_name(name: str) -> Category:
+        pass
+
+    @abstractmethod
     def list() -> List[Category]:
         pass
 

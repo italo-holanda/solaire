@@ -111,7 +111,6 @@ class ThoughtRepository(ThoughtRepositoryInterface):
         self.db.commit()
 
     def update(self, thought: Thought) -> None:
-        """Update a thought's text by its ID"""
         if not self.db:
             self.db = next(get_db())
 
@@ -125,7 +124,12 @@ class ThoughtRepository(ThoughtRepositoryInterface):
         thought_model.text = thought.text
         thought_model.summary = thought.summary
         thought_model.title = thought.title
-        # thought_model.categories = thought.categories
-        # @TODO: fix categories insertion
+
+        category_models = []
+        if thought.categories:
+            category_models = self.db.query(CategoryModel).filter(
+                CategoryModel.id.in_([cat.id for cat in thought.categories])
+            ).all()
+        thought_model.categories = category_models
 
         self.db.commit()

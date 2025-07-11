@@ -44,6 +44,24 @@ class CategoryRepository(CategoryRepositoryInterface):
             color=category_model.color
         )
 
+    def get_by_name(self, name: str) -> Category:
+        """Get a category by its name"""
+        if not self.db:
+            self.db = next(get_db())
+
+        category_model = self.db.query(CategoryModel).filter(
+            CategoryModel.name == name
+        ).first()
+
+        if not category_model:
+            return None
+
+        return Category(
+            id=category_model.id,
+            name=category_model.name,
+            color=category_model.color
+        )
+
     def list(self) -> List[Category]:
         """List all categories"""
         if not self.db:
