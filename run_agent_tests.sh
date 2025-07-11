@@ -19,6 +19,7 @@ fi
 
 echo "Environment:"
 echo "  OLLAMA_MODEL: $OLLAMA_MODEL"
+echo "  OLLAMA_LOCAL_URL: $OLLAMA_LOCAL_URL"
 echo ""
 
 PROJECT_ROOT="backend"

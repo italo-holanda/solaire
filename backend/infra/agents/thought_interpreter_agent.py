@@ -67,7 +67,10 @@ class ThoughtInterpreterAgent(ThoughtInterpreterInterface):
     """
 
     def __init__(self):
-        self.llm = ChatOllama(model=os.getenv('OLLAMA_MODEL'))
+        self.llm = ChatOllama(
+            model=os.getenv("OLLAMA_MODEL", ""),
+            base_url=os.getenv("OLLAMA_LOCAL_URL", ""),
+        )
         self.graph = self._setup_graph()
 
     def _setup_graph(self):
