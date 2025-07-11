@@ -65,5 +65,17 @@ class TestCategoryRepository(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.repo.get_by_id(str(uuid4()))
 
+    def test__should_find_by_name(self):
+        category_id = str(uuid4())
+        name = self.faker.word()
+        color = self.faker.color_name()
+        category = Category(id=category_id, name=name, color=color)
+        self.repo.save(category)
+        fetched = self.repo.get_by_name(name)
+        self.assertIsNotNone(fetched)
+        self.assertEqual(fetched.id, category_id)
+        self.assertEqual(fetched.name, name)
+        self.assertEqual(fetched.color, color)
+
 if __name__ == "__main__":
     unittest.main()

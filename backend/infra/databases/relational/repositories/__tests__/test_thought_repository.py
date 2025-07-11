@@ -81,15 +81,28 @@ class TestThoughtRepository(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.repo.get_by_id(thought.id)
 
-    def test__should_update_thought_text(self):
-        category = self.make_category()
-        thought = self.make_thought(category)
+    def test__should_update_thought(self):
+        category1 = self.make_category()
+        category2 = self.make_category()
+
+        thought = self.make_thought(category1)
         self.repo.save(thought)
+
         new_text = self.faker.text(max_nb_chars=200) + (" lorem ipsum" * 10)
+        new_summary = self.faker.sentence(nb_words=15)
+        new_title = self.faker.sentence(nb_words=8)
         thought.text = new_text
+        thought.summary = new_summary
+        thought.title = new_title
+        thought.categories = [category2]
         self.repo.update(thought)
+ 
         updated = self.repo.get_by_id(thought.id)
         self.assertEqual(updated.text, new_text)
+        self.assertEqual(updated.summary, new_summary)
+        self.assertEqual(updated.title, new_title)
+        self.assertEqual(len(updated.categories), 1)
+        self.assertEqual(updated.categories[0].id, category2.id)
 
     def test__should_throw_when_not_found(self):
         with self.assertRaises(ValueError):
