@@ -7,21 +7,21 @@ from backend.core.thought.domain.entities.thought import Thought
 class ThoughtRepositoryInterface(ABC):
 
     @abstractmethod
-    def save(thought: Thought) -> None:
+    def save(self, thought: Thought) -> None:
         pass
 
     @abstractmethod
-    def get_by_id(id: str) -> Thought:
+    def get_by_id(self, id: str) -> Thought:
         pass
 
     @abstractmethod
-    def list() -> List[Thought]:
+    def list(self) -> List[Thought]:
         pass
 
     @abstractmethod
-    def delete(id: str) -> None:
+    def delete(self, id: str) -> None:
         pass
 
     @abstractmethod
-    def update(thought: Thought) -> None:
+    def update(self, thought: Thought) -> None:
         pass

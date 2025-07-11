@@ -13,17 +13,17 @@ class ThoughtVector(BaseModel):
 
 class ThoughtVectorStoreInterface(ABC):
     @abstractmethod
-    def create_index(thought: Thought) -> None:
+    def create_index(self, thought: Thought) -> None:
         pass
 
     @abstractmethod
-    def search_similar(thought: Thought) -> List[ThoughtVector]:
+    def search_similar(self, thought: Thought) -> List[ThoughtVector]:
         pass
 
     @abstractmethod
-    def search_similar_by_text(thought_text: str) -> List[ThoughtVector]:
+    def search_similar_by_text(self, thought_text: str) -> List[ThoughtVector]:
         pass
 
     @abstractmethod
-    def delete_index(thought: Thought) -> None:
+    def delete_index(self, thought: Thought) -> None:
         pass

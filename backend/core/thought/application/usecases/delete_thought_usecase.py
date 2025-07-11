@@ -17,5 +17,7 @@ class DeleteThoughtUsecase:
         self.thought_vector_store = thought_vector_store
 
     def execute(self, dto: DeleteThoughtDTO) -> None:
+        # Fetch the Thought object before deletion
+        thought = self.thought_repository.get_by_id(dto.thought_id)
         self.thought_repository.delete(dto.thought_id)
-        self.thought_vector_store.delete_index(dto.thought_id)
+        self.thought_vector_store.delete_index(thought)
