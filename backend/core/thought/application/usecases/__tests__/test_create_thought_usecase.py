@@ -18,13 +18,15 @@ class TestCreateThoughtUsecase:
         self.dependencies = {
             "thought_interpreter": Mock(),
             "thought_repository": Mock(),
-            "thought_vector_store": Mock()
+            "thought_vector_store": Mock(),
+            "category_repository": Mock(),
         }
 
         self.usecase = CreateThoughtUsecase(
             thought_interpreter=self.dependencies.get('thought_interpreter'),
             thought_repository=self.dependencies.get('thought_repository'),
             thought_vector_store=self.dependencies.get('thought_vector_store'),
+            category_repository=self.dependencies.get('category_repository'),
         )
 
         """
@@ -108,3 +110,61 @@ class TestCreateThoughtUsecase:
         indexed_thought = self.dependencies["thought_vector_store"].create_index.call_args[0][0]
 
         assert indexed_thought.text == valid_text
+
+    def test__should_create_new_category_when_not_found(self):
+        from backend.core.category.domain.entities.category import Category
+        # Setup interpreter to return a category
+        category_name = "NewCategory"
+        category = Category(name=category_name)
+        self.dependencies["thought_interpreter"].invoke.return_value = ThoughtInterpreterOutput(
+            categories=[category],
+            summary="summary",
+            title="title"
+        )
+        self.dependencies["category_repository"].get_by_name.return_value = None
+        valid_text = faker.text(max_nb_chars=300)
+        self.usecase.execute(CreateThoughtDTO(text=valid_text))
+        self.dependencies["category_repository"].save.assert_called_once_with(category)
+        self.dependencies["thought_repository"].update.assert_called()
+
+    def test__should_use_the_saved_category_id_when_found(self):
+        from backend.core.category.domain.entities.category import Category
+        # Setup interpreter to return a category
+        category_name = "ExistingCategory"
+        category = Category(name=category_name)
+        found_category = Category(id="existing-id", name=category_name)
+        self.dependencies["thought_interpreter"].invoke.return_value = ThoughtInterpreterOutput(
+            categories=[category],
+            summary="summary",
+            title="title"
+        )
+        self.dependencies["category_repository"].get_by_name.return_value = found_category
+        valid_text = faker.text(max_nb_chars=300)
+        self.usecase.execute(CreateThoughtDTO(text=valid_text))
+        # Should not create a new category
+        self.dependencies["category_repository"].save.assert_not_called()
+        self.dependencies["thought_repository"].update.assert_called()
+        # The category id should be set to the found one
+        updated_thought = self.dependencies["thought_repository"].update.call_args[0][0]
+        assert updated_thought.categories[0].id == found_category.id
+
+    def test__should_update_thought_repository_with_interpreter_results(self):
+        from backend.core.category.domain.entities.category import Category
+        # Setup interpreter to return a category and new summary/title
+        category_name = "Cat"
+        category = Category(name=category_name)
+        new_summary = "new summary"
+        new_title = "new title"
+        self.dependencies["thought_interpreter"].invoke.return_value = ThoughtInterpreterOutput(
+            categories=[category],
+            summary=new_summary,
+            title=new_title
+        )
+        self.dependencies["category_repository"].get_by_name.return_value = None
+        valid_text = faker.text(max_nb_chars=300)
+        self.usecase.execute(CreateThoughtDTO(text=valid_text))
+        self.dependencies["thought_repository"].update.assert_called()
+        updated_thought = self.dependencies["thought_repository"].update.call_args[0][0]
+        assert updated_thought.summary == new_summary
+        assert updated_thought.title == new_title
+        assert updated_thought.categories[0].name == category_name
