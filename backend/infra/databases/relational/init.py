@@ -1,4 +1,4 @@
-from engine import engine
-from models import Base
+from backend.infra.databases.relational.engine import engine
+from backend.infra.databases.relational.models import Base
 
 Base.metadata.create_all(engine)
