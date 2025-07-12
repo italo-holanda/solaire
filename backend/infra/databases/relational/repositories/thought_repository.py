@@ -45,7 +45,7 @@ class ThoughtRepository(ThoughtRepositoryInterface):
         ).first()
 
         if not thought_model:
-            raise ValueError(f"Thought with id {id} not found")
+            return None
 
         categories = [
             Category(
@@ -104,11 +104,9 @@ class ThoughtRepository(ThoughtRepositoryInterface):
             ThoughtModel.id == id
         ).first()
 
-        if not thought_model:
-            raise ValueError(f"Thought with id {id} not found")
-
-        self.db.delete(thought_model)
-        self.db.commit()
+        if thought_model:
+            self.db.delete(thought_model)
+            self.db.commit()
 
     def update(self, thought: Thought) -> None:
         if not self.db:
@@ -119,7 +117,7 @@ class ThoughtRepository(ThoughtRepositoryInterface):
         ).first()
 
         if not thought_model:
-            raise ValueError(f"Thought with id {thought.id} not found")
+            return
 
         thought_model.text = thought.text
         thought_model.summary = thought.summary

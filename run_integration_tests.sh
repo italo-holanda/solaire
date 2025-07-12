@@ -36,10 +36,10 @@ else
 fi
 
 # Check Ollama
-if curl -s "$OLLAMA_HEALTH_URL/api/tags" > /dev/null; then
-    echo "✓ Ollama is running on $OLLAMA_HEALTH_URL"
+if curl -s "$OLLAMA_LOCAL_URL/api/tags" > /dev/null; then
+    echo "✓ Ollama is running on $OLLAMA_LOCAL_URL"
 else
-    echo "✗ Ollama is not running on $OLLAMA_HEALTH_URL"
+    echo "✗ Ollama is not running on $OLLAMA_LOCAL_URL"
     echo "Please start Ollama using: docker-compose up ollama"
     exit 1
 fi

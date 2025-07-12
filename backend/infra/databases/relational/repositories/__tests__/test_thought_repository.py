@@ -78,8 +78,8 @@ class TestThoughtRepository(unittest.TestCase):
         thought = self.make_thought(category)
         self.repo.save(thought)
         self.repo.delete(thought.id)
-        with self.assertRaises(ValueError):
-            self.repo.get_by_id(thought.id)
+        fetched = self.repo.get_by_id(thought.id)
+        self.assertIsNone(fetched)
 
     def test__should_update_thought(self):
         category1 = self.make_category()
@@ -104,9 +104,9 @@ class TestThoughtRepository(unittest.TestCase):
         self.assertEqual(len(updated.categories), 1)
         self.assertEqual(updated.categories[0].id, category2.id)
 
-    def test__should_throw_when_not_found(self):
-        with self.assertRaises(ValueError):
-            self.repo.get_by_id(str(uuid4()))
+    def test__should_return_none_when_not_found(self):
+        fetched = self.repo.get_by_id(str(uuid4()))
+        self.assertIsNone(fetched)
 
 if __name__ == "__main__":
     unittest.main()
