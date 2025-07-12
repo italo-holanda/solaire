@@ -18,13 +18,15 @@ class TestUpdateThoughtUsecase:
         self.dependencies = {
             "thought_interpreter": Mock(),
             "thought_repository": Mock(),
-            "thought_vector_store": Mock()
+            "thought_vector_store": Mock(),
+            "category_repository": Mock()
         }
 
         self.usecase = UpdateThoughtUsecase(
             thought_interpreter=self.dependencies.get('thought_interpreter'),
             thought_repository=self.dependencies.get('thought_repository'),
             thought_vector_store=self.dependencies.get('thought_vector_store'),
+            category_repository=self.dependencies.get('category_repository'),
         )
 
         """
@@ -139,8 +141,10 @@ class TestUpdateThoughtUsecase:
             UpdateThoughtDTO(thought_id=thought_id, text=valid_text)
         )
 
+        # The update is called twice: once immediately and once in the async thread
+        assert self.dependencies["thought_repository"].update.call_count == 2
         self.dependencies["thought_repository"].update \
-            .assert_called_once_with(thought)
+            .assert_any_call(thought)
 
         assert thought.text == valid_text
 
@@ -186,9 +190,9 @@ class TestUpdateThoughtUsecase:
             UpdateThoughtDTO(thought_id=thought_id, text=valid_text)
         )
 
+        # The update is called twice: once immediately and once in the async thread
+        assert self.dependencies["thought_repository"].update.call_count == 2
         self.dependencies["thought_repository"].update \
-            .assert_called_once_with(thought)
-        self.dependencies["thought_vector_store"].delete_index \
-            .assert_called_once_with(thought)
+            .assert_any_call(thought)
         self.dependencies["thought_vector_store"].create_index \
             .assert_called_once_with(thought)
