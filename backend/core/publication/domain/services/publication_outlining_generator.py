@@ -4,11 +4,12 @@ from typing import List, Optional
 from backend.core.thought.domain.entities.thought import Thought
 
 
-class PublicationOutliningGenerator(ABC):
+class PublicationOutliningGeneratorInterface(ABC):
 
     @abstractmethod
-    def generate(
-        thoughts: list[Thought],
+    def invoke(
+        self,
+        thoughts: List[Thought],
         user_guideline: Optional[str],
 
     ) -> List[str]:

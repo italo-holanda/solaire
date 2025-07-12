@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from backend.core.common.domain.exceptions.application_exception import ApplicationException
 from backend.core.publication.domain.entities.publication import Publication, PublicationFormat
 from backend.core.publication.domain.repositories.publication_repository import PublicationRepositoryInterface
-from backend.core.publication.domain.services.publication_outlining_generator import PublicationOutliningGenerator
+from backend.core.publication.domain.services.publication_outlining_generator import PublicationOutliningGeneratorInterface
 from backend.core.thought.domain.repositories.thought_repository import ThoughtRepositoryInterface
 
 
@@ -19,7 +19,7 @@ class CreatePublicationPreviewUsecase ():
         self,
         thought_repository: ThoughtRepositoryInterface,
         publication_repository: PublicationRepositoryInterface,
-        outlining_generator: PublicationOutliningGenerator
+        outlining_generator: PublicationOutliningGeneratorInterface
     ):
         self.thought_repository = thought_repository
         self.publication_repository = publication_repository
@@ -36,7 +36,7 @@ class CreatePublicationPreviewUsecase ():
         if len(thoughts) == 0:
             raise ApplicationException("No thoughts found", 404)
 
-        outlining = self.outlining_generator.generate(
+        outlining = self.outlining_generator.invoke(
             thoughts,
             dto.user_guideline
         )
