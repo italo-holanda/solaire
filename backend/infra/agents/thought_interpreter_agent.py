@@ -12,14 +12,6 @@ from backend.core.thought.domain.entities.thought import Thought
 from backend.core.thought.domain.services.thought_interpreter import ThoughtInterpreterInterface, ThoughtInterpreterOutput
 
 
-AgentRoute = Literal[
-    'summary_generator',
-    'title_generator',
-    'categories_extractor',
-    'finish'
-]
-
-
 LOG_LEVEL = os.getenv('AGENT_LOG_LEVEL', 'INFO').upper()
 logger = logging.getLogger(__name__)
 logger.setLevel(LOG_LEVEL)
@@ -30,10 +22,6 @@ if not logger.hasHandlers():
     )
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-
-
-class AgentState(Thought):
-    route: Optional[AgentRoute]
 
 
 class SummaryOutput(BaseModel):
@@ -74,7 +62,7 @@ class ThoughtInterpreterAgent(ThoughtInterpreterInterface):
         self.graph = self._setup_graph()
 
     def _setup_graph(self):
-        builder = StateGraph(AgentState)
+        builder = StateGraph(Thought)
         builder.add_node('summary_generator', self._summary_generator)
         builder.add_node('title_generator', self._title_generator)
         builder.add_node('categories_extractor', self._categories_extractor)
@@ -86,7 +74,7 @@ class ThoughtInterpreterAgent(ThoughtInterpreterInterface):
 
         return builder.compile()
 
-    def _summary_generator(self, thought: AgentState) -> AgentState:
+    def _summary_generator(self, thought: Thought) -> Thought:
         logger.debug('Calling `_summary_generator` with thought: %s', thought)
         summary_generation_prompt = """
             You will receive a block of thought written by a user. 
@@ -104,7 +92,7 @@ class ThoughtInterpreterAgent(ThoughtInterpreterInterface):
         logger.debug(f'Summary generated: "%s"', output.summary)
         return {'summary': output.summary}
 
-    def _title_generator(self, thought: AgentState) -> AgentState:
+    def _title_generator(self, thought: Thought) -> Thought:
         logger.debug('Calling `_title_generator` with thought: %s', thought)
         title_generation_prompt = """
             You are an assistant designed to analyze thought entries 
@@ -124,7 +112,7 @@ class ThoughtInterpreterAgent(ThoughtInterpreterInterface):
         logger.debug(f'Title generated: "%s"', output.title)
         return {'title': output.title}
 
-    def _categories_extractor(self, thought: AgentState) -> AgentState:
+    def _categories_extractor(self, thought: Thought) -> Thought:
         logger.debug(
             'Calling `_categories_extractor` with thought: %s', thought
         )
@@ -155,7 +143,7 @@ class ThoughtInterpreterAgent(ThoughtInterpreterInterface):
             'Invoking ThoughtInterpreterAgent workflow with thought: %s', thought
         )
         result = self.graph.invoke(
-            AgentState(**thought.model_dump(), route=None)
+            Thought(**thought.model_dump(), route=None)
         )
         logger.info('Workflow result: %s', result)
         return ThoughtInterpreterOutput(**result)
