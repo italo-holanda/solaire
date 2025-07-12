@@ -6,6 +6,7 @@ from fastapi import APIRouter, HTTPException
 from backend.core.common.domain.exceptions.application_exception import ApplicationException
 from backend.core.thought.application.usecases.create_thought_usecase import CreateThoughtDTO, CreateThoughtUsecase
 from backend.core.thought.application.usecases.delete_thought_usecase import DeleteThoughtDTO, DeleteThoughtUsecase
+from backend.core.thought.application.usecases.list_related_thoughts_usecase import ListRelatedThoughtsDTO, ListRelatedThoughtsUsecase
 from backend.core.thought.application.usecases.list_thoughts_usecase import ListThoughtsDTO, ListThoughtsUsecase
 from backend.core.thought.application.usecases.suggest_relevant_topics_usecase import SuggestRelevantTopicsDTO, SuggestRelevantTopicsUsecase
 from backend.core.thought.domain.entities.thought import Thought
@@ -79,6 +80,24 @@ async def sugget_similar_topics(thought_id: str) -> List[str]:
 
     try:
         result = usecase.execute(SuggestRelevantTopicsDTO(thought_id=thought_id))
+        return result
+    except ApplicationException as ae:
+        raise HTTPException(status_code=ae.code, detail=ae.message)
+    except Exception:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+
+@router.get("/{thought_id}/related")
+async def list_related_thoughts(thought_id):
+    """
+    Given a thought, list related others
+    """
+
+    usecase = Container.resolve(ListRelatedThoughtsUsecase)
+
+    try:
+        result = usecase.execute(ListRelatedThoughtsDTO(thought_id=thought_id))
         return result
     except ApplicationException as ae:
         raise HTTPException(status_code=ae.code, detail=ae.message)
