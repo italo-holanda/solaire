@@ -1,7 +1,7 @@
 import pytest
 from backend.infra.agents.publication_content_generator_agent import PublicationContentGeneratorAgent
 from backend.core.thought.domain.entities.thought import Thought
-from backend.core.category.domain.entities.category import Category
+from backend.core.publication.domain.services.publication_content_generator import PublicationContentOutput
 
 _THOUGHT_1_TEXT = """
 I think unit testing in Python is one of those things
@@ -33,6 +33,25 @@ helps you write better code and communicate more effectively
 with other developers.
 """
 
+_THOUGHT_4_TEXT = """
+Refactoring used to feel like a luxury—something you'd only do
+if you had extra time (which, let's be honest, rarely happens).
+But now I see it as a core part of writing good software.
+It's like tidying up your workspace so future you—or anyone else—
+can find their way around. When you pair refactoring with
+good tests, it's empowering. You can make bold changes
+with confidence, knowing the safety net is there.
+"""
+
+_THOUGHT_5_TEXT = """
+Code reviews are underrated as a learning tool.
+Sure, they're about catching issues and improving quality,
+but they're also moments for knowledge transfer and mentorship.
+When done right, a review isn't a gatekeeping step—
+it's a dialogue. You learn by seeing how others think,
+what they notice, and what they care about.
+"""
+
 _USER_GUIDELINE = """
 Write in a conversational, educational tone that connects with software developers.
 Focus on practical insights and real-world applications. Use examples and analogies
@@ -48,11 +67,9 @@ _OUTLINING = [
     "Conclusion: Continuous improvement as a mindset"
 ]
 
-
 @pytest.fixture
 def agent():
     return PublicationContentGeneratorAgent()
-
 
 def make_thought(text: str, title: str = "Test Thought") -> Thought:
     return Thought(
@@ -63,10 +80,8 @@ def make_thought(text: str, title: str = "Test Thought") -> Thought:
         categories=[]
     )
 
-
 def test_agent_instantiates(agent):
     assert isinstance(agent, PublicationContentGeneratorAgent)
-
 
 def test_agent_has_required_methods(agent):
     assert hasattr(agent, "_generate_content")
@@ -74,121 +89,66 @@ def test_agent_has_required_methods(agent):
     assert callable(agent._generate_content)
     assert callable(agent.invoke)
 
-
 def test_agent_has_llm_attribute(agent):
     assert hasattr(agent, "llm")
     assert agent.llm is not None
 
-
-def test__generate_content_should_return_structured_response(agent):
-    thoughts = [
-        make_thought(_THOUGHT_1_TEXT, "Unit Testing"),
-        make_thought(_THOUGHT_2_TEXT, "Software Architecture"),
-    ]
-    result = agent._generate_content(thoughts, _USER_GUIDELINE, _OUTLINING)
-    assert result is not None
-    assert hasattr(result, "outlining")
-    assert isinstance(result.outlining, list)
-    assert len(result.outlining) > 0
-
-
-def test__generate_content_should_handle_empty_guideline(agent):
-    thoughts = [
-        make_thought(_THOUGHT_1_TEXT, "Unit Testing"),
-        make_thought(_THOUGHT_2_TEXT, "Software Architecture"),
-    ]
-    result = agent._generate_content(thoughts, None, _OUTLINING)
-    assert result is not None
-    assert hasattr(result, "outlining")
-    assert isinstance(result.outlining, list)
-    assert len(result.outlining) > 0
-
-
-def test__generate_content_should_handle_single_thought(agent):
-    thoughts = [make_thought(_THOUGHT_1_TEXT, "Unit Testing")]
-    result = agent._generate_content(thoughts, _USER_GUIDELINE, _OUTLINING)
-    assert result is not None
-    assert hasattr(result, "outlining")
-    assert isinstance(result.outlining, list)
-    assert len(result.outlining) > 0
-
-
-def test__generate_content_should_handle_multiple_thoughts(agent):
-    thoughts = [
-        make_thought(_THOUGHT_1_TEXT, "Unit Testing"),
-        make_thought(_THOUGHT_2_TEXT, "Software Architecture"),
-        make_thought(_THOUGHT_3_TEXT, "Design Patterns"),
-    ]
-    result = agent._generate_content(thoughts, _USER_GUIDELINE, _OUTLINING)
-    assert result is not None
-    assert hasattr(result, "outlining")
-    assert isinstance(result.outlining, list)
-    assert len(result.outlining) > 0
-
-
-def test_invoke_should_return_list_of_strings(agent):
+def test_invoke_returns_publication_content_output(agent):
     thoughts = [
         make_thought(_THOUGHT_1_TEXT, "Unit Testing"),
         make_thought(_THOUGHT_2_TEXT, "Software Architecture"),
     ]
     result = agent.invoke(thoughts, _USER_GUIDELINE, _OUTLINING)
-    assert isinstance(result, list)
-    assert len(result) > 0
-    for item in result:
-        assert isinstance(item, str)
-        assert len(item) > 0
+    assert isinstance(result, PublicationContentOutput)
+    assert hasattr(result, "title")
+    assert hasattr(result, "content")
+    assert isinstance(result.title, str)
+    assert isinstance(result.content, str)
+    assert len(result.title.strip()) > 0
+    assert len(result.content.strip()) > 0
 
-
-def test_invoke_should_handle_empty_guideline(agent):
+def test_invoke_handles_empty_guideline(agent):
     thoughts = [
         make_thought(_THOUGHT_1_TEXT, "Unit Testing"),
         make_thought(_THOUGHT_2_TEXT, "Software Architecture"),
     ]
     result = agent.invoke(thoughts, None, _OUTLINING)
-    assert isinstance(result, list)
-    assert len(result) > 0
-    for item in result:
-        assert isinstance(item, str)
-        assert len(item) > 0
+    assert isinstance(result, PublicationContentOutput)
+    assert hasattr(result, "title")
+    assert hasattr(result, "content")
+    assert isinstance(result.title, str)
+    assert isinstance(result.content, str)
+    assert len(result.title.strip()) > 0
+    assert len(result.content.strip()) > 0
 
-
-def test_invoke_should_handle_single_thought(agent):
+def test_invoke_handles_single_thought(agent):
     thoughts = [make_thought(_THOUGHT_1_TEXT, "Unit Testing")]
     result = agent.invoke(thoughts, _USER_GUIDELINE, _OUTLINING)
-    assert isinstance(result, list)
-    assert len(result) > 0
-    for item in result:
-        assert isinstance(item, str)
-        assert len(item) > 0
+    assert isinstance(result, PublicationContentOutput)
+    assert hasattr(result, "title")
+    assert hasattr(result, "content")
+    assert isinstance(result.title, str)
+    assert isinstance(result.content, str)
+    assert len(result.title.strip()) > 0
+    assert len(result.content.strip()) > 0
 
-
-def test_invoke_should_handle_multiple_thoughts(agent):
+def test_invoke_handles_multiple_thoughts(agent):
     thoughts = [
         make_thought(_THOUGHT_1_TEXT, "Unit Testing"),
         make_thought(_THOUGHT_2_TEXT, "Software Architecture"),
         make_thought(_THOUGHT_3_TEXT, "Design Patterns"),
+        make_thought(_THOUGHT_4_TEXT, "Refactoring"),
+        make_thought(_THOUGHT_5_TEXT, "Underated Tests"),
     ]
     result = agent.invoke(thoughts, _USER_GUIDELINE, _OUTLINING)
-    assert isinstance(result, list)
-    assert len(result) > 0
-    for item in result:
-        assert isinstance(item, str)
-        assert len(item) > 0
-
-
-def test_content_items_should_be_meaningful(agent):
-    thoughts = [
-        make_thought(_THOUGHT_1_TEXT, "Unit Testing"),
-        make_thought(_THOUGHT_2_TEXT, "Software Architecture"),
-    ]
-    result = agent.invoke(thoughts, _USER_GUIDELINE, _OUTLINING)
-    for item in result:
-        assert isinstance(item, str)
-        assert len(item) > 5
-        assert item.strip() != ""
-
+    assert isinstance(result, PublicationContentOutput)
+    assert hasattr(result, "title")
+    assert hasattr(result, "content")
+    assert isinstance(result.title, str)
+    assert isinstance(result.content, str)
+    assert len(result.title.strip()) > 0
+    assert len(result.content.strip()) > 0
 
 def test_agent_implements_interface():
     from backend.core.publication.domain.services.publication_content_generator import PublicationContentGeneratorInterface
-    assert issubclass(PublicationContentGeneratorAgent,
-                      PublicationContentGeneratorInterface)
+    assert issubclass(PublicationContentGeneratorAgent, PublicationContentGeneratorInterface)

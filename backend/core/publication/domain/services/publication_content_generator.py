@@ -18,5 +18,5 @@ class PublicationContentGeneratorInterface(ABC):
         user_guideline: Optional[str],
         outlining: List[str]
 
-    ) -> str:
+    ) -> PublicationContentOutput:
         pass

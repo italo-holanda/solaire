@@ -28,12 +28,19 @@ thesis-driven piece with a clear introduction, development, and conclusion.
 VERY IMPORTANT: No external information is allowed. 
 The final output should be a polished, human-like text in Markdown format, with smooth 
 transitions and consistent tone throughout.
+
+Your response MUST be a JSON object with two fields: "content" (string, the generated Markdown content) and "title" (string, the generated title).
+Example:
+{{
+  "content": "# My Publication\n\nThis is the content of my publication.",
+  "title": "My Publication Title"
+}}
 """
 
 
 class AgentResponse(BaseModel):
     content: str = Field(description="The MD generated content")
-    titke: str = Field(description="The generated title")
+    title: str = Field(description="The generated title")
 
 
 class PublicationContentGeneratorAgent(PublicationContentGeneratorInterface):
@@ -42,8 +49,6 @@ class PublicationContentGeneratorAgent(PublicationContentGeneratorInterface):
     ---
     The `PublicationOutliningGeneratorAgent` is responsible for generating
     Markdown Text for publications based on user thoughts and guidelines.
-
-    WARN: Must use a >=7b model
     """
 
     def __init__(self):
@@ -99,3 +104,4 @@ class PublicationContentGeneratorAgent(PublicationContentGeneratorInterface):
             title=result.title,
             content=result.content
         )
+
