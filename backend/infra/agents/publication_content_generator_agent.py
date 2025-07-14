@@ -7,7 +7,7 @@ from langchain_ollama import ChatOllama
 from pydantic import BaseModel, Field
 
 from backend.core.thought.domain.entities.thought import Thought
-from backend.core.publication.domain.services.publication_content_generator import PublicationContentGeneratorInterface
+from backend.core.publication.domain.services.publication_content_generator import PublicationContentGeneratorInterface, PublicationContentOutput
 
 
 LOG_LEVEL = os.getenv("AGENT_LOG_LEVEL", "INFO").upper()
@@ -32,7 +32,8 @@ transitions and consistent tone throughout.
 
 
 class AgentResponse(BaseModel):
-    outlining: list[str] = Field(description="The list of outlining topics")
+    content: str = Field(description="The MD generated content")
+    titke: str = Field(description="The generated title")
 
 
 class PublicationContentGeneratorAgent(PublicationContentGeneratorInterface):
@@ -41,6 +42,8 @@ class PublicationContentGeneratorAgent(PublicationContentGeneratorInterface):
     ---
     The `PublicationOutliningGeneratorAgent` is responsible for generating
     Markdown Text for publications based on user thoughts and guidelines.
+
+    WARN: Must use a >=7b model
     """
 
     def __init__(self):
@@ -52,7 +55,8 @@ class PublicationContentGeneratorAgent(PublicationContentGeneratorInterface):
     def _generate_content(
         self, thoughts: List[Thought], user_guideline: Optional[str], outlining: List[str]
     ) -> AgentResponse:
-        outlining_md = "\n".join([f"### {i+1}. {item}" for i, item in enumerate(outlining)])
+        outlining_md = "\n".join(
+            [f"### {i+1}. {item}" for i, item in enumerate(outlining)])
         system_prompt = _AGENT_PROMPT + "\n\n# Outlining\n" + outlining_md
         messages: List[Union[SystemMessage, HumanMessage]] = []
         messages.append(SystemMessage(content=system_prompt))
@@ -77,10 +81,10 @@ class PublicationContentGeneratorAgent(PublicationContentGeneratorInterface):
         thoughts: List[Thought],
         user_guideline: Optional[str],
         outlining: List[str]
-    ) -> List[str]:
+    ) -> PublicationContentOutput:
         thought_titles = [f"- {thought.title}" for thought in thoughts]
         logger.info(
-            "Invoking PublicationOutliningGeneratorAgent workflow with thoughts: %s",
+            "Invoking PublicationContentGeneratorAgent workflow with thoughts: %s",
             ", ".join(thought_titles)
         )
 
@@ -91,4 +95,7 @@ class PublicationContentGeneratorAgent(PublicationContentGeneratorInterface):
         result = self._generate_content(thoughts, user_guideline, outlining)
         logger.info("Workflow result: %s", result)
 
-        return result.outlining
+        return PublicationContentOutput(
+            title=result.title,
+            content=result.content
+        )
