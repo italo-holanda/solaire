@@ -83,8 +83,7 @@ class TestPublicationRepository(unittest.TestCase):
         publication = self.make_publication(category)
         self.pub_repo.save(publication)
         self.pub_repo.delete(publication.id)
-        with self.assertRaises(ValueError):
-            self.pub_repo.get_by_id(publication.id)
+        self.assertIsNone(self.pub_repo.get_by_id(publication.id))
 
     def test__should_update_publication(self):
         category = self.make_category()
