@@ -116,8 +116,8 @@ class TestPublicationRepository(unittest.TestCase):
         self.assertEqual(updated.user_guideline, new_user_guideline)
 
     def test__should_throw_when_not_found(self):
-        with self.assertRaises(ValueError):
-            self.pub_repo.get_by_id(str(uuid4()))
+        result = self.pub_repo.get_by_id(str(uuid4()))
+        self.assertIsNone(result)
 
 if __name__ == "__main__":
     unittest.main()

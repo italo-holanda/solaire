@@ -3,11 +3,11 @@ from unittest.mock import Mock
 from faker import Faker
 
 from backend.core.common.domain.exceptions.application_exception import ApplicationException
-from core.publication.application.usecases.create_publication_preview_usecase import (
+from backend.core.publication.application.usecases.create_publication_preview_usecase import (
     CreatePublicationPreviewDTO, CreatePublicationPreviewUsecase
 )
-from core.publication.domain.entities.publication import Publication
-from core.thought.domain.entities.thought import Thought
+from backend.core.publication.domain.entities.publication import Publication
+from backend.core.thought.domain.entities.thought import Thought
 
 faker = Faker()
 
@@ -40,12 +40,11 @@ class TestCreatePublicationPreviewUsecase:
         publication_format = "blog_post"
         user_guideline = "Be concise."
 
-        for _ in zip(thought_ids, thoughts):
-            self.dependencies["thought_repository"] \
-                .get_by_id.side_effect = lambda x: thoughts[thought_ids.index(x)] \
-                if x in thought_ids else None
+        self.dependencies["thought_repository"].get_by_id.side_effect = (
+            lambda x: thoughts[thought_ids.index(x)] if x in thought_ids else None
+        )
 
-        self.dependencies["outlining_generator"].generate.return_value = outlining
+        self.dependencies["outlining_generator"].invoke.return_value = outlining
 
         publication = Publication(
             id=faker.uuid4(),
@@ -78,7 +77,7 @@ class TestCreatePublicationPreviewUsecase:
             .save.assert_called_once()
 
         self.dependencies["outlining_generator"] \
-            .generate.assert_called_once_with(thoughts, user_guideline)
+            .invoke.assert_called_once_with(thoughts, user_guideline)
 
     def test__should_throw_error_when_missing_thoughts(self):
         thought_ids = [faker.uuid4(), faker.uuid4()]
@@ -102,14 +101,12 @@ class TestCreatePublicationPreviewUsecase:
         thought_ids = [faker.uuid4(), faker.uuid4()]
         thoughts = [Mock(spec=Thought), Mock(spec=Thought)]
 
-        for _ in zip(thought_ids, thoughts):
-            self.dependencies["thought_repository"] \
-                .get_by_id.side_effect = lambda x: thoughts[
-                    thought_ids.index(x)
-            ] if x in thought_ids else None
+        self.dependencies["thought_repository"].get_by_id.side_effect = (
+            lambda x: thoughts[thought_ids.index(x)] if x in thought_ids else None
+        )
 
         self.dependencies["outlining_generator"] \
-            .generate.return_value = ["Section 1"]
+            .invoke.return_value = ["Section 1"]
 
         self.dependencies["publication_repository"] \
             .save.return_value = Mock(spec=Publication)
@@ -123,4 +120,4 @@ class TestCreatePublicationPreviewUsecase:
         self.usecase.execute(dto)
 
         self.dependencies["outlining_generator"] \
-            .generate.assert_called_once_with(thoughts, "Guide")
+            .invoke.assert_called_once_with(thoughts, "Guide")
