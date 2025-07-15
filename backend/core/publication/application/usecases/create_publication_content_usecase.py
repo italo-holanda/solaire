@@ -1,16 +1,16 @@
+from typing import List
 from pydantic import BaseModel
 
 from backend.core.common.domain.exceptions.application_exception import ApplicationException
-from backend.core.publication.domain.entities.publication import Publication, PublicationFormat
+from backend.core.publication.domain.entities.publication import Publication
 from backend.core.publication.domain.repositories.publication_repository import PublicationRepositoryInterface
-from backend.core.publication.domain.services.publication_content_generator import PublicationContentGenerator
-from backend.core.publication.domain.services.publication_title_generator import PublicationTitleGenerator
+from backend.core.publication.domain.services.publication_content_generator import PublicationContentGeneratorInterface
 from backend.core.thought.domain.repositories.thought_repository import ThoughtRepositoryInterface
 
 
 class CreatePublicationContentDTO(BaseModel):
     publication_id: str
-    publication_outlining: str
+    publication_outlining: List[str]
 
 
 class CreatePublicationContentUsecase ():
@@ -18,13 +18,11 @@ class CreatePublicationContentUsecase ():
         self,
         thought_repository: ThoughtRepositoryInterface,
         publication_repository: PublicationRepositoryInterface,
-        content_generator: PublicationContentGenerator,
-        title_generator: PublicationTitleGenerator
+        content_generator: PublicationContentGeneratorInterface,
     ):
         self.thought_repository = thought_repository
         self.publication_repository = publication_repository
         self.content_generator = content_generator
-        self.title_generator = title_generator
 
     def execute(self, dto: CreatePublicationContentDTO) -> Publication:
 
@@ -39,15 +37,15 @@ class CreatePublicationContentUsecase ():
             if thought:
                 thoughts.append(thought)
 
-        content = self.content_generator.generate(
+        generated = self.content_generator.invoke(
             thoughts,
             publication.user_guideline,
-            outlining=publication.outlining
+            outlining=dto.publication_outlining
         )
 
         try:
-            publication.title = self.content_generator.generate(content)
-            publication.content = content
+            publication.title = generated.title
+            publication.content = generated.content
             publication.stage = "ready"
         except ValueError:
             raise ApplicationException('Invalid publication', 400)

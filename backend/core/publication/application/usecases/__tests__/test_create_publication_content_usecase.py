@@ -3,11 +3,13 @@ from unittest.mock import Mock
 from faker import Faker
 
 from backend.core.common.domain.exceptions.application_exception import ApplicationException
-from core.publication.application.usecases.create_publication_content_usecase import (
+from backend.core.publication.application.usecases.create_publication_content_usecase import (
     CreatePublicationContentDTO, CreatePublicationContentUsecase
 )
-from core.publication.domain.entities.publication import Publication
-from core.thought.domain.entities.thought import Thought
+from backend.core.publication.domain.entities.publication import Publication
+from backend.core.publication.domain.services.publication_content_generator import PublicationContentOutput
+from backend.core.thought.domain.entities.thought import Thought
+from backend.core.category.domain.entities.category import Category
 
 faker = Faker()
 
@@ -15,74 +17,83 @@ faker = Faker()
 class TestCreatePublicationContentUsecase:
     @pytest.fixture(autouse=True)
     def setup(self):
-        self.dependencies = {
-            "thought_repository": Mock(),
-            "publication_repository": Mock(),
-            "content_generator": Mock(),
-            "title_generator": Mock(),
-        }
+        self.thought_repository = Mock()
+        self.publication_repository = Mock()
+        self.content_generator = Mock()
         self.usecase = CreatePublicationContentUsecase(
-            thought_repository=self.dependencies["thought_repository"],
-            publication_repository=self.dependencies["publication_repository"],
-            content_generator=self.dependencies["content_generator"],
-            title_generator=self.dependencies["title_generator"]
+            thought_repository=self.thought_repository,
+            publication_repository=self.publication_repository,
+            content_generator=self.content_generator
         )
 
-    """
-    1. Should create the publication content successfully
-    2. Should throw error when publication not found
-    """
+    def make_category(self):
+        return Category(
+            id=faker.uuid4(),
+            name=faker.word(),
+            color=faker.color_name()
+        )
+
+    def make_thought(self, id=None):
+        return Thought(
+            id=id or faker.uuid4(),
+            title=faker.sentence(nb_words=3),
+            summary=faker.sentence(nb_words=6),
+            text=faker.text(max_nb_chars=200) + (" lorem ipsum" * 10),
+            categories=[self.make_category() for _ in range(2)],
+            embeddings=[faker.pyfloat(left_digits=1, right_digits=5)
+                        for _ in range(5)]
+        )
+
+    def make_publication(self, thought_ids=None, stage="preview"):
+        return Publication(
+            id=faker.uuid4(),
+            title=faker.sentence(nb_words=6),
+            content=faker.text(max_nb_chars=200),
+            categories=[self.make_category() for _ in range(2)],
+            outlining=[faker.sentence() for _ in range(3)],
+            format="blog_post",
+            stage=stage,
+            thought_ids=thought_ids or [faker.uuid4() for _ in range(2)],
+            user_guideline=faker.sentence()
+        )
 
     def test__should_create_publication_content_successfully(self):
-        publication_id = faker.uuid4()
-        thought_ids = [faker.uuid4(), faker.uuid4()]
-        thoughts = [Mock(spec=Thought), Mock(spec=Thought)]
+        publication = self.make_publication()
+        thoughts = [self.make_thought(id=tid)
+                    for tid in publication.thought_ids]
+        outlining = ["Intro", "Body", "Conclusion"]
+        generated_output = PublicationContentOutput(
+            title="Generated Title", content="Generated Content")
 
-        publication = Mock(spec=Publication)
-        publication.thought_ids = thought_ids
-        publication.outlining = "Some outlining"
-        publication.user_guideline = "Be clear."
-
-        self.dependencies["publication_repository"].get_by_id.return_value = publication
-        self.dependencies["thought_repository"]. \
-            get_by_id.side_effect = lambda x: thoughts[
-                thought_ids.index(x)
-        ] if x in thought_ids else None
-
-        content = "Generated content"
-        title = "Generated title"
-
-        self.dependencies["content_generator"] \
-            .generate.side_effect = [content, title]
+        self.publication_repository.get_by_id.return_value = publication
+        self.thought_repository.get_by_id.side_effect = lambda tid: next(
+            (t for t in thoughts if t.id == tid), None)
+        self.content_generator.invoke.return_value = generated_output
 
         dto = CreatePublicationContentDTO(
-            publication_id=publication_id,
-            publication_outlining="Some outlining"
+            publication_id=publication.id,
+            publication_outlining=outlining
         )
+
         result = self.usecase.execute(dto)
 
-        assert result == publication
-        assert publication.content == content
-        assert publication.title == title
-        assert publication.stage == "ready"
-
-        self.dependencies["publication_repository"].update \
-            .assert_called_once_with(publication)
-        self.dependencies["content_generator"].generate \
-            .assert_any_call(
-                thoughts,
-                publication.user_guideline,
-                outlining=publication.outlining
+        assert result.title == generated_output.title
+        assert result.content == generated_output.content
+        assert result.stage == "ready"
+        self.publication_repository.update.assert_called_once_with(publication)
+        self.content_generator.invoke.assert_called_once_with(
+            thoughts,
+            publication.user_guideline,
+            outlining=outlining
         )
 
-    def test__should_raise_error_when_publication_not_found(self):
-        publication_id = faker.uuid4()
-        self.dependencies["publication_repository"].get_by_id.return_value = None
+    def test__should_raise_when_publication_not_found(self):
+        self.publication_repository.get_by_id.return_value = None
         dto = CreatePublicationContentDTO(
-            publication_id=publication_id,
-            publication_outlining="Some outlining"
+            publication_id=faker.uuid4(),
+            publication_outlining=["Section 1"]
         )
-        with pytest.raises(ApplicationException, match="Publication not found"):
+        with pytest.raises(ApplicationException) as exc:
             self.usecase.execute(dto)
-        self.dependencies["publication_repository"].get_by_id \
-            .assert_called_once_with(publication_id)
+        assert exc.value.code == 404
+        assert "not found" in exc.value.message.lower()

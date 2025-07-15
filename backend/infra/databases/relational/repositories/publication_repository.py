@@ -53,7 +53,7 @@ class PublicationRepository(PublicationRepositoryInterface):
         ).first()
 
         if not publication_model:
-            raise ValueError(f"Publication with id {id} not found")
+            return None
 
         categories = [
             Category(
