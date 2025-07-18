@@ -1,11 +1,12 @@
-import { Button } from './components/ui/button'
 
-import "./App.css"
+import { LeftMenu } from './components/templates/left-menu/left-menu'
 
 export default function App() {
   return (
-    <div className='bg-stone-950'>
-      <Button>Hello</Button>
+    <div className='h-screen'>
+      <div>
+        <LeftMenu />
+      </div>
     </div>
   )
 }
