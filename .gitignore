@@ -17,7 +17,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+/lib/
 lib64/
 parts/
 sdist/
@@ -226,4 +226,4 @@ yarn-error.log*
 /.changelog
 .npm/
 yarn.lock
-frontend/*/lib/
+!frontend/src/lib/
