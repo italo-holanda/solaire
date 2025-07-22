@@ -1,4 +1,5 @@
 
+import { NewThought } from './components/pages/new-thought/new-thought'
 import { LeftMenu } from './components/templates/left-menu/left-menu'
 import { RightMenu } from './components/templates/right-menu/right-menu'
 
@@ -7,7 +8,7 @@ export default function App() {
     <div className='bg-stone-900 h-screen'>
       <div className='flex justify-between'>
         <LeftMenu />
-        <div></div>
+        <NewThought />
         <RightMenu />
       </div>
     </div>
