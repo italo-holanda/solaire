@@ -3,7 +3,7 @@ import { ThoughtInput } from "@/components/molecules/thought-input/thought-input
 
 export function NewThought() {
   return (
-    <div className="p-2 w-full relative">
+    <main className="p-2 w-full relative">
       <div className="font-medium p-4 h-20 flex items-center">
         Record a new thought
       </div>
@@ -21,6 +21,6 @@ export function NewThought() {
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
