@@ -1,5 +1,6 @@
 import { Separator } from "@/components/atoms/separator";
 import { ThoughtInput } from "@/components/molecules/thought-input/thought-input";
+import { ThoughtMessage } from "@/components/organisms/thought-message/thought-message";
 
 export function NewThought() {
   return (
@@ -9,8 +10,8 @@ export function NewThought() {
       </div>
       <Separator />
 
-      <div className="mx-auto">
-        <div className="h-full"></div>
+      <div className="max-w-2xl p-6 mx-auto">
+        <ThoughtMessage />
 
         <div className="absolute bottom-0 left-0 w-full">
           <div className="mx-auto flex flex-col items-center gap-3 w-2xl p-6">
