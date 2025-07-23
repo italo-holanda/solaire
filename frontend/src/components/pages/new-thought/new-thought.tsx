@@ -9,14 +9,16 @@ export function NewThought() {
       </div>
       <Separator />
 
-      <div className="p-4">
+      <div className="mx-auto">
         <div className="h-full"></div>
 
-        <div className="p-6 flex flex-col items-center gap-3 absolute bottom-0 left-0 w-full">
-          <ThoughtInput />
-          <span className="text-sm text-stone-500">
-            Your thought will be automatically analyzed by Solaire.
-          </span>
+        <div className="absolute bottom-0 left-0 w-full">
+          <div className="mx-auto flex flex-col items-center gap-3 w-2xl p-6">
+            <ThoughtInput />
+            <span className="text-sm text-stone-500">
+              Your thought will be automatically analyzed by Solaire.
+            </span>
+          </div>
         </div>
       </div>
     </div>
