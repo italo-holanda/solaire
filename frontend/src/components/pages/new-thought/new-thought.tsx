@@ -4,14 +4,21 @@ import { ThoughtMessage } from "@/components/organisms/thought-message/thought-m
 
 export function NewThought() {
   return (
-    <main className="p-2 w-full relative">
+    <main className="p-2 w-full relative h-full flex flex-col">
       <div className="font-medium p-4 h-20 flex items-center">
         Record a new thought
       </div>
       <Separator />
 
-      <div className="max-w-2xl p-6 mx-auto">
-        <ThoughtMessage />
+      <div className="max-w-2xl p-6 mx-auto flex flex-col flex-1 min-h-0">
+        <div className="flex-1 min-h-0 flex flex-col overflow-auto">
+          <ThoughtMessage />
+
+          {/* Creates a botton gap  */}
+          <div className="min-h-55 w-full">
+            <span className="text-transparent">...</span>
+          </div>
+        </div>
 
         <div className="absolute bottom-0 left-0 w-full">
           <div className="mx-auto flex flex-col items-center gap-3 w-2xl p-6">
