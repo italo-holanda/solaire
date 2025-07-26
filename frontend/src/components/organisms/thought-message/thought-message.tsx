@@ -1,4 +1,6 @@
 import { Button } from "@/components/atoms/button";
+import { CategoryBadge } from "@/components/molecules/category-badge/category-badge";
+import { Blockquote } from "@/components/atoms/blockquote";
 import { ChevronDownIcon } from "lucide-react";
 import { useState } from "react";
 
@@ -53,6 +55,7 @@ export function ThoughtMessage() {
           </div>
         </article>
       </div>
+
       {isExpanded && (
         <div className="bg-stone-950 border-1 border-t-transparent rounded-b-lg">
           <article className="p-6 flex gap-3">
@@ -73,6 +76,38 @@ export function ThoughtMessage() {
                 suddenly you’re not sure if you’re lost or just finally slowing
                 down.
               </p>
+
+              <div className="flex flex-col gap-1">
+                <h2 className="text-sm text-stone-400">Categories</h2>
+                <ul className="flex gap-1">
+                  <li>
+                    <CategoryBadge name="travel" color="#8C6CFF" />
+                  </li>
+                  <li>
+                    <CategoryBadge name="art" color="#FF6C6C" />
+                  </li>
+                  <li>
+                    <CategoryBadge name="history" color="#FF6CF0" />
+                  </li>
+                </ul>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <h2 className="text-sm text-stone-400">Related to</h2>
+                <ul className="flex flex-wrap gap-2">
+                  <li>
+                    <Blockquote text="My last weekend in Tallinn" />
+                  </li>
+
+                  <li>
+                    <Blockquote text="The dark forests of Estonia" />
+                  </li>
+
+                  <li>
+                    <Blockquote text="Exploring coffee tastes in the Baltics" />
+                  </li>
+                </ul>
+              </div>
             </div>
           </article>
         </div>

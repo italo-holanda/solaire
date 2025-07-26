@@ -40,7 +40,7 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-stone-950: #161616;
-  --color-stone-900: #1E1E1E;
+  --color-stone-900: #1e1e1e;
   --color-stone-850: #242424;
 }
 
@@ -126,4 +126,20 @@ body * {
   font-family: "IBM Plex Sans", system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
     sans-serif;
+}
+
+*::-webkit-scrollbar {
+  width: 20px;
+}
+
+*::-webkit-scrollbar-track {
+  background-color: transparent;
+  border-radius: 100px;
+}
+
+*::-webkit-scrollbar-thumb {
+  border: 8px solid transparent;
+  border-radius: 100px;
+  background-color: var(--border);
+  background-clip: content-box;
 }
