@@ -4,8 +4,8 @@ import { ThoughtHistory } from "./components/templates/thought-history/thought-h
 
 export default function App() {
   return (
-    <div className="bg-stone-900 h-screen">
-      <div className="flex h-full justify-between">
+    <div className="bg-black h-screen p-2">
+      <div className="bg-stone-900 rounded-lg border-1 border-stone-800 flex h-full justify-between">
         <LeftMenu />
         <ThoughtHistory />
         <RightMenu />

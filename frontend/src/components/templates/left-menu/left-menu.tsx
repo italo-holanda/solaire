@@ -8,7 +8,7 @@ import { SearchInput } from "@/components/molecules/search-input/search-input";
 
 export function LeftMenu() {
   return (
-    <aside className="bg-stone-950 h-screen w-xs xl:min-w-xs p-2 border-r-1 ">
+    <aside className="bg-stone-950 h-full w-xs xl:min-w-xs p-2 border-r-1 rounded-l-md">
       <div className="h-20 flex items-center justify-center">
         <img src="/solaire.svg" height={39} width={140} />
       </div>
