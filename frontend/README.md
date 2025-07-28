@@ -1,69 +1,74 @@
-# React + TypeScript + Vite
+# Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![Frontend Diagram](./public/frontend-diagram.png)
 
-Currently, two official plugins are available:
+## Frontend Architecture Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+This diagram illustrates the system architecture for the frontend application, showcasing a well-structured state management pattern with clear separation of concerns between data stores, UI components, and API interactions.
 
-## Expanding the ESLint configuration
+### Core Architecture Components
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+The frontend follows a centralized state management pattern with two main data domains:
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+#### **Thoughts Store (State Management)**
+- **Purpose**: Central state management for thoughts data
+- **Data Flow**: 
+  - Receives data via HTTP from `/api/list thoughts` endpoint
+  - Distributes data to UI templates through data sharing
+  - Handles filtering from search input components
+  - Receives invalidation signals to trigger data refresh
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+#### **Categories Store (State Management)**
+- **Purpose**: Central state management for categories data
+- **Data Flow**:
+  - Receives data via HTTP from `/api/list categories` endpoint
+  - Provides data to categories list component
+  - Receives invalidation signals for data consistency
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### UI Templates and Components
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+#### **Main Templates**
+- **Thoughts Gallery Template**: Displays collections of thoughts using data from the thoughts store
+- **Thoughts History Template**: Shows chronological lists of thoughts with individual thought components
+- **Left Sidebar Template**: Contains search functionality for filtering thoughts
+- **Right Sidebar Template**: Displays categories and last thoughts
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+#### **Interactive Components**
+- **Search Input Component**: Provides filtering capabilities to the thoughts store
+- **Thought Message Component**: Displays individual thoughts,. Updates, and deletion with API interactions
+- **Thought Input Component**: Handles thought creation. 
+- **Categories List**: Show all categories and filter thoughts by category.
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### API Integration
+
+The frontend integrates with several backend endpoints:
+
+- **`GET /thoughts`**: Retrieves thoughts data for the thoughts store
+- **`GET /categories`**: Retrieves categories data for the categories store
+- **`POST /thoughts`**: Creates new thoughts via the thought input component
+- **`PATCH /thoughts/<uuid>`**: Updates existing thoughts via the thought input component
+- **`DELETE /thoughts/<uuid>`**: Deletes thoughts via the thought input component
+
+Obs: check api reference at `http://localhost:8000/docs`
+
+### Data Flow Patterns
+
+#### **Solid Arrows**: Direct Data Flow
+- Data sharing from stores to UI components
+- HTTP requests to API endpoints
+
+#### **Dashed Arrows**: Control Signals
+- Filter commands for data selection
+- Invalidation signals for triggering data refresh
+
+### Architecture Benefits
+
+This architecture provides several advantages:
+
+1. **Single Source of Truth**: Centralized state management ensures data consistency
+2. **Separation of Concerns**: Clear distinction between data management and UI rendering
+3. **Reactive Updates**: Invalidation signals ensure UI updates when data changes
+4. **Scalable Design**: Modular components can be easily extended or modified
+5. **Efficient Data Flow**: Optimized data sharing reduces redundant API calls
+
+The design follows modern frontend development patterns, likely implementing a Flux or Redux-like state management approach for robust and maintainable code.
