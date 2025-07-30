@@ -34,7 +34,7 @@ export function ThoughtHistory() {
           </div>
         </div>
 
-        <div className="absolute bottom-0 left-0 w-full">
+        <div className="bg-gradient-to-t from-stone-900 to-transparent absolute bottom-0 left-0 w-full">
           <div className="mx-auto flex flex-col items-center gap-3 w-2xl p-6">
             <ThoughtInput />
             <span className="text-sm text-stone-500">
