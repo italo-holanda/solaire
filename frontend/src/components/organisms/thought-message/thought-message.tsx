@@ -4,9 +4,14 @@ import { Blockquote } from "@/components/atoms/blockquote";
 import { ChevronDownIcon } from "lucide-react";
 import { useState } from "react";
 import type { Thought } from "@/types";
+import { useRelatedThoughts } from "@/hooks/use-related-thoughts";
 
 export function ThoughtMessage(props: Thought) {
   const [isExpanded, setIsExpanded] = useState(false);
+
+  const relateds = useRelatedThoughts({
+    thoughtId: isExpanded ? props.id : undefined,
+  });
 
   return (
     <>
@@ -64,31 +69,23 @@ export function ThoughtMessage(props: Thought) {
               <div className="flex flex-col gap-1">
                 <h2 className="text-sm text-stone-400">Categories</h2>
                 <ul className="flex flex-wrap gap-1">
-                  {
-                    props.categories.map(category => (
-                      <CategoryBadge
-                        color={category.color ?? 'green'}
-                        name={category.name}
-                      />
-                    ))
-                  }
+                  {props.categories.map((category) => (
+                    <CategoryBadge
+                      color={category.color ?? "green"}
+                      name={category.name}
+                    />
+                  ))}
                 </ul>
               </div>
 
               <div className="flex flex-col gap-2">
                 <h2 className="text-sm text-stone-400">Related to</h2>
                 <ul className="flex flex-wrap gap-2">
-                  <li>
-                    <Blockquote text="My last weekend in Tallinn" />
-                  </li>
-
-                  <li>
-                    <Blockquote text="The dark forests of Estonia" />
-                  </li>
-
-                  <li>
-                    <Blockquote text="Exploring coffee tastes in the Baltics" />
-                  </li>
+                  {relateds.data?.map((related) => (
+                    <li key={related.id}>
+                      <Blockquote text={related.title} />
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>

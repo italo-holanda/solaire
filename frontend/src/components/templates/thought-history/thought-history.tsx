@@ -1,10 +1,11 @@
 import { Separator } from "@/components/atoms/separator";
 import { ThoughtInput } from "@/components/molecules/thought-input/thought-input";
 import { ThoughtMessage } from "@/components/organisms/thought-message/thought-message";
-import { useThoughtsQuery } from "@/stores/thoughts-store";
+import { useThoughts } from "@/hooks/use-thoughts";
+
 
 export function ThoughtHistory() {
-  const thoughtStore = useThoughtsQuery();
+  const thoughts = useThoughts();
 
   return (
     <main className="p-2 w-full relative h-full flex flex-col">
@@ -21,7 +22,7 @@ export function ThoughtHistory() {
           </div>
 
           <ul className="flex flex-col gap-5">
-            {thoughtStore?.data?.map((thought) => (
+            {thoughts?.data?.map((thought) => (
               <li key={thought.id}>
                 <ThoughtMessage {...thought} />
               </li>
