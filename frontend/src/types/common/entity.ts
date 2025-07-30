@@ -1,6 +1,6 @@
 export type Entity = {
   id: string;
-  created_at: string; // ISO datetime string
-  updated_at: string; // ISO datetime string
-  deleted_at?: string; // ISO datetime string, optional
-} 
+  created_at: Date;
+  updated_at: Date;
+  deleted_at?: Date;
+};

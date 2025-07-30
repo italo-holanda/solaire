@@ -6,6 +6,7 @@ import type {
   UpdateThoughtDTO,
   ListThoughtsDTO,
 } from "@/types/thought/dto";
+import type { Category } from "@/types";
 
 /**
  * Get list of thoughts with optional search term
@@ -13,13 +14,32 @@ import type {
 export const getThoughts = async (
   params: ListThoughtsDTO
 ): Promise<Thought[]> => {
+  function standardizePayload(thoughts: Thought[]): Thought[] {
+    return thoughts.map((thought) => ({
+      id: thought.id,
+      summary: thought.summary,
+      text: thought.text,
+      title: thought.title,
+      categories: thought.categories.map((category) => ({
+        id: category.id ?? "",
+        name: category.name ?? "",
+        color: category.color ?? "green",
+        created_at: new Date(category.created_at),
+        updated_at: new Date(category.updated_at),
+      })) as Category[],
+      created_at: new Date(thought.created_at),
+      updated_at: new Date(thought.updated_at),
+      embeddings: [],
+    }));
+  }
+
   const response: AxiosResponse<Thought[]> = await api.get("/thoughts", {
     headers: {
       "Content-Type": "application/json",
     },
     params,
   });
-  return response.data;
+  return standardizePayload(response.data);
 };
 
 /**

@@ -20,10 +20,10 @@ export function ThoughtHistory() {
             <span className="text-transparent">...</span>
           </div>
 
-          <ul className="flex flex-col gap-10">
+          <ul className="flex flex-col gap-5">
             {thoughtStore?.data?.map((thought) => (
-              <li>
-                <ThoughtMessage />
+              <li key={thought.id}>
+                <ThoughtMessage {...thought} />
               </li>
             ))}
           </ul>
