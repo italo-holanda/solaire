@@ -1,8 +1,11 @@
 import { Separator } from "@/components/atoms/separator";
 import { ThoughtInput } from "@/components/molecules/thought-input/thought-input";
 import { ThoughtMessage } from "@/components/organisms/thought-message/thought-message";
+import { useThoughtsQuery } from "@/stores/thoughts-store";
 
 export function ThoughtHistory() {
+  const thoughtStore = useThoughtsQuery();
+
   return (
     <main className="p-2 w-full relative h-full flex flex-col">
       <div className="font-medium p-4 h-20 flex items-center">
@@ -17,7 +20,13 @@ export function ThoughtHistory() {
             <span className="text-transparent">...</span>
           </div>
 
-          <ThoughtMessage />
+          <ul className="flex flex-col gap-10">
+            {thoughtStore?.data?.map((thought) => (
+              <li>
+                <ThoughtMessage />
+              </li>
+            ))}
+          </ul>
 
           {/* Creates a botton gap  */}
           <div className="min-h-55 w-full">
