@@ -6,6 +6,41 @@ import { useState } from "react";
 import type { Thought } from "@/types";
 import { useRelatedThoughts } from "@/hooks/use-related-thoughts";
 
+/**
+ *
+ * Breaks the text line every 25 chars if no white-space
+ * found
+ */
+function preventTextOverflow(text: string) {
+  const words = text.split(" ");
+  const result: string[] = [];
+  let currentLine = "";
+
+  for (const word of words) {
+    if (currentLine.length + word.length <= 25) {
+      currentLine += (currentLine ? " " : "") + word;
+    } else {
+      if (currentLine) {
+        result.push(currentLine);
+      }
+      if (word.length > 25) {
+        for (let i = 0; i < word.length; i += 25) {
+          result.push(word.slice(i, i + 25));
+        }
+        currentLine = "";
+      } else {
+        currentLine = word;
+      }
+    }
+  }
+
+  if (currentLine) {
+    result.push(currentLine);
+  }
+
+  return result.join("\n");
+}
+
 export function ThoughtMessage(props: Thought) {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -35,7 +70,9 @@ export function ThoughtMessage(props: Thought) {
           </figure>
 
           <div className="flex flex-col gap-2">
-            <p className="text-base/6.5 text-stone-200">{props.text}</p>
+            <p className="text-base/6.5 text-stone-200 break-words">
+              {preventTextOverflow(props.text)}
+            </p>
 
             <div className="flex justify-between">
               <div className="flex gap-2">

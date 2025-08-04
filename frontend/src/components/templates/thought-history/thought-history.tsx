@@ -1,11 +1,19 @@
 import { Separator } from "@/components/atoms/separator";
 import { ThoughtInput } from "@/components/molecules/thought-input/thought-input";
 import { ThoughtMessage } from "@/components/organisms/thought-message/thought-message";
+import { useAutoScroll } from "@/hooks/use-auto-scroll";
 import { useThoughts } from "@/hooks/use-thoughts";
-
+import { useMemo } from "react";
 
 export function ThoughtHistory() {
   const thoughts = useThoughts();
+
+  const lastThoughtId = useMemo(
+    () => thoughts?.data?.[thoughts.data.length - 1]?.id?.split("-")?.[0],
+    [thoughts]
+  );
+
+  useAutoScroll(lastThoughtId);
 
   return (
     <main className="p-2 w-full relative h-full flex flex-col">
@@ -23,14 +31,14 @@ export function ThoughtHistory() {
 
           <ul className="flex flex-col gap-5">
             {thoughts?.data?.map((thought) => (
-              <li key={thought.id}>
+              <li id={thought.id?.split("-")?.[0]} key={thought.id}>
                 <ThoughtMessage {...thought} />
               </li>
             ))}
           </ul>
 
           {/* Creates a botton gap  */}
-          <div className="min-h-55 w-full">
+          <div className="min-h-65 w-full">
             <span className="text-transparent">...</span>
           </div>
         </div>
