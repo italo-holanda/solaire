@@ -39,18 +39,23 @@ export function ThoughtInput() {
         disabled={createThought.isPending}
         enterKeyHint="send"
       />
-      <div className="flex justify-end text-xs p-2 px-4 bg-stone-950 border-1 border-border rounded-2xl">
-        <span
-          className={(() => {
-            if (text.length > 100 && text.length < 900) return "text-green-400";
-            if (text.length > 900 && text.length < 1000)
-              return "text-amber-400";
-            return "text-red-400";
-          })()}
-        >
-          {text.length}
-        </span>
-        <span className="text-stone-400">/1000 chars</span>
+      <div className="flex justify-between text-xs p-2 px-4 bg-stone-950 border-1 border-border rounded-2xl">
+        <span className="text-stone-500">Size of your thought</span>
+
+        <div>
+          <span
+            className={(() => {
+              if (text.length > 100 && text.length < 900)
+                return "text-green-400";
+              if (text.length > 900 && text.length < 1000)
+                return "text-amber-400";
+              return "text-red-400";
+            })()}
+          >
+            {text.length}
+          </span>
+          <span className="text-stone-400">/1000 chars</span>
+        </div>
       </div>
     </div>
   );
