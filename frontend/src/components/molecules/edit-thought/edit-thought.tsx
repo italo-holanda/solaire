@@ -1,8 +1,6 @@
 import { Button } from "@/components/atoms/button";
 import { Textarea } from "@/components/atoms/textarea";
 import { useUpdateThought } from "@/hooks/use-thoughts";
-import { preventTextOverflow } from "@/utils/formatting";
-import { SquarePenIcon } from "lucide-react";
 import { useState } from "react";
 
 type EditThoughtProps = {
