@@ -5,6 +5,7 @@ import { ChevronDownIcon } from "lucide-react";
 import { useState } from "react";
 import type { Thought } from "@/types";
 import { useRelatedThoughts } from "@/hooks/use-related-thoughts";
+import { useDeleteThought } from "@/hooks/use-thoughts";
 
 /**
  *
@@ -48,6 +49,8 @@ export function ThoughtMessage(props: Thought) {
     thoughtId: isExpanded ? props.id : undefined,
   });
 
+  const deletionHook = useDeleteThought();
+
   return (
     <>
       <div className="bg-stone-850 border-1 rounded-lg">
@@ -77,7 +80,14 @@ export function ThoughtMessage(props: Thought) {
             <div className="flex justify-between">
               <div className="flex gap-2">
                 <Button variant="ghost">Edit</Button>
-                <Button variant="ghost">Delete</Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    deletionHook.mutateAsync(props.id);
+                  }}
+                >
+                  Delete
+                </Button>
               </div>
 
               <Button
