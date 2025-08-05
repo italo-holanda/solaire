@@ -22,16 +22,16 @@ export function ThoughtHistory() {
       </div>
       <Separator />
 
-      <div className="max-w-2xl px-6 mx-auto flex flex-col flex-1 min-h-0">
-        <div className="pl-4 flex-1 min-h-0 flex flex-col overflow-y-scroll">
+      <div className="max-w-2xl px-6 mx-auto flex flex-col flex-1 min-h-0 w-full">
+        <div className="pl-4 flex-1 min-h-0 flex flex-col overflow-y-scroll w-full">
           {/* Creates a top gap  */}
           <div className="min-h-8 w-full">
             <span className="text-transparent">...</span>
           </div>
 
-          <ul className="flex flex-col gap-5">
+          <ul className="flex flex-col gap-5 w-full">
             {thoughts?.data?.map((thought) => (
-              <li id={thought.id?.split("-")?.[0]} key={thought.id}>
+              <li className="w-full" id={thought.id?.split("-")?.[0]} key={thought.id}>
                 <ThoughtMessage {...thought} />
               </li>
             ))}

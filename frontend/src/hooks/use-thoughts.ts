@@ -1,8 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import type { ListThoughtsDTO, CreateThoughtDTO } from "@/types/thought/dto";
+import type { ListThoughtsDTO, CreateThoughtDTO, UpdateThoughtDTO } from "@/types/thought/dto";
 import {
   getThoughts,
   createThought,
+  updateThought,
   deleteThought,
 } from "@/services/api/thoughts/thoughts";
 import { toast } from "sonner";
@@ -28,6 +29,20 @@ export const useCreateThought = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["thoughts"] });
       toast("Thought has been created");
+    },
+  });
+};
+
+export const useUpdateThought = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: UpdateThoughtDTO) => {
+      return await updateThought(data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["thoughts"] });
+      toast("Thought has been updated");
     },
   });
 };

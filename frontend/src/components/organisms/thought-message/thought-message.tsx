@@ -6,44 +6,12 @@ import { useState } from "react";
 import type { Thought } from "@/types";
 import { useRelatedThoughts } from "@/hooks/use-related-thoughts";
 import { useDeleteThought } from "@/hooks/use-thoughts";
-
-/**
- *
- * Breaks the text line every 25 chars if no white-space
- * found
- */
-function preventTextOverflow(text: string) {
-  const words = text.split(" ");
-  const result: string[] = [];
-  let currentLine = "";
-
-  for (const word of words) {
-    if (currentLine.length + word.length <= 25) {
-      currentLine += (currentLine ? " " : "") + word;
-    } else {
-      if (currentLine) {
-        result.push(currentLine);
-      }
-      if (word.length > 25) {
-        for (let i = 0; i < word.length; i += 25) {
-          result.push(word.slice(i, i + 25));
-        }
-        currentLine = "";
-      } else {
-        currentLine = word;
-      }
-    }
-  }
-
-  if (currentLine) {
-    result.push(currentLine);
-  }
-
-  return result.join("\n");
-}
+import { EditThought } from "@/components/molecules/edit-thought/edit-thought";
+import { preventTextOverflow } from "@/utils/formatting";
 
 export function ThoughtMessage(props: Thought) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   const relateds = useRelatedThoughts({
     thoughtId: isExpanded ? props.id : undefined,
@@ -52,9 +20,9 @@ export function ThoughtMessage(props: Thought) {
   const deletionHook = useDeleteThought();
 
   return (
-    <>
-      <div className="bg-stone-850 border-1 rounded-lg">
-        <article className="p-6 flex gap-3">
+    <div className="w-full">
+      <div className="bg-stone-850 border-1 rounded-lg w-full">
+        <article className="p-6 flex gap-3 w-full">
           <figure className="flex flex-col items-center gap-2 w-10">
             <img
               className="bg-amber-400 rounded-full"
@@ -72,31 +40,50 @@ export function ThoughtMessage(props: Thought) {
             </legend>
           </figure>
 
-          <div className="flex flex-col gap-2">
-            <p className="text-base/6.5 text-stone-200 break-words">
-              {preventTextOverflow(props.text)}
-            </p>
+          <div className="flex flex-col gap-2 w-full">
+            {!isEditing && (
+              <p className="text-base/6.5 text-stone-200 break-words">
+                {preventTextOverflow(props.text)}
+              </p>
+            )}
 
-            <div className="flex justify-between">
-              <div className="flex gap-2">
-                <Button variant="ghost">Edit</Button>
+            {isEditing && (
+              <EditThought
+                onClose={() => setIsEditing(false)}
+                thoughtId={props.id}
+                initialText={props.text}
+              />
+            )}
+
+            {!isEditing && (
+              <div className="flex justify-between">
+                <div className="flex gap-2">
+                  <Button
+                    variant="ghost"
+                    onClick={() => {
+                      setIsEditing(true);
+                    }}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    onClick={() => {
+                      deletionHook.mutateAsync(props.id);
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </div>
+
                 <Button
-                  variant="ghost"
-                  onClick={() => {
-                    deletionHook.mutateAsync(props.id);
-                  }}
+                  onClick={() => setIsExpanded((p) => !p)}
+                  variant={isExpanded ? "outline" : "ghost"}
                 >
-                  Delete
+                  <ChevronDownIcon />
                 </Button>
               </div>
-
-              <Button
-                onClick={() => setIsExpanded((p) => !p)}
-                variant={isExpanded ? "outline" : "ghost"}
-              >
-                <ChevronDownIcon />
-              </Button>
-            </div>
+            )}
           </div>
         </article>
       </div>
@@ -139,6 +126,6 @@ export function ThoughtMessage(props: Thought) {
           </article>
         </div>
       )}
-    </>
+    </div>
   );
 }
