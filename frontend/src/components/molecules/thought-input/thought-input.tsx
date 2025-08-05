@@ -1,18 +1,16 @@
 import { useState } from "react";
 import { Textarea } from "@/components/atoms/textarea";
-import { useCreateThought, useThoughts } from "@/hooks/use-thoughts";
+import { useCreateThought } from "@/hooks/use-thoughts";
 
 export function ThoughtInput() {
   const [text, setText] = useState("");
   const createThought = useCreateThought();
-  const { refetch } = useThoughts();
 
   const handleSubmit = async () => {
     if (!text.trim()) return;
 
     try {
       await createThought.mutateAsync({ text: text.trim() });
-      refetch();
     } catch (error) {
       console.error("Failed to create thought:", error);
     } finally {
