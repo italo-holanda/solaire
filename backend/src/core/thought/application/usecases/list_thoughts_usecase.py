@@ -23,6 +23,12 @@ class ListThoughtsUsecase:
     def execute(self, dto: ListThoughtsDTO) -> List[Thought]:
         if not dto.search_term:
             return self.thought_repository.list()
-        return self.thought_vector_store.search_similar_by_text(
-            thought_text=f'{dto.search_term}'
+        vector_results = self.thought_vector_store.search_similar_by_text(
+            thought_text=f"{dto.search_term}"
         )
+        thoughts: List[Thought] = []
+        for vector in vector_results:
+            thought = self.thought_repository.get_by_id(vector.thought_id)
+            if thought:
+                thoughts.append(thought)
+        return thoughts

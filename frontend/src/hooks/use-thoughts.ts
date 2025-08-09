@@ -7,13 +7,20 @@ import {
   deleteThought,
 } from "@/services/api/thoughts/thoughts";
 import { toast } from "sonner";
+import { useNavigation } from "@/hooks/use-navigation";
 
-export const useThoughts = (params: ListThoughtsDTO = {}) => {
+export const useThoughts = (overrideParams: ListThoughtsDTO = {}) => {
+  const { params: navigationParams, currentView } = useNavigation();
+  const hasOverrideParams = Object.keys(overrideParams).length > 0;
+  const apiParams: ListThoughtsDTO = hasOverrideParams
+    ? overrideParams
+    : { search_term: currentView === "gallery" ? navigationParams?.searchTerms : undefined };
+
   return useQuery({
-    queryKey: ["thoughts", params],
+    queryKey: ["thoughts", apiParams],
     refetchInterval: 5000,
     queryFn: async () => {
-      const thoughts = await getThoughts(params);
+      const thoughts = await getThoughts(apiParams);
       return thoughts;
     },
   });
