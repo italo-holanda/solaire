@@ -1,23 +1,23 @@
 /**
  *
- * Breaks the text line every 25 chars if no white-space
+ * Breaks the text line every maxLen chars if no white-space
  * found
  */
-export function preventTextOverflow(text: string) {
+export function preventTextOverflow(text: string, maxLen = 25) {
   const words = text.split(" ");
   const result: string[] = [];
   let currentLine = "";
 
   for (const word of words) {
-    if (currentLine.length + word.length <= 25) {
+    if (currentLine.length + word.length <= maxLen) {
       currentLine += (currentLine ? " " : "") + word;
     } else {
       if (currentLine) {
         result.push(currentLine);
       }
-      if (word.length > 25) {
-        for (let i = 0; i < word.length; i += 25) {
-          result.push(word.slice(i, i + 25));
+      if (word.length > maxLen) {
+        for (let i = 0; i < word.length; i += maxLen) {
+          result.push(word.slice(i, i + maxLen));
         }
         currentLine = "";
       } else {
