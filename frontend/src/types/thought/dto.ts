@@ -9,6 +9,7 @@ export type UpdateThoughtDTO = {
 
 export type ListThoughtsDTO = {
   search_term?: string;
+  category_ids?: string[];
 };
 
 export type DeleteThoughtDTO = {

@@ -38,7 +38,7 @@ router = APIRouter()
 
 
 @router.get("")
-async def get_thoughts(search_term: str = None) -> List[Thought]:
+async def get_thoughts(search_term: str = None, category_ids: str = None) -> List[Thought]:
     """
     Get thought list
     """
@@ -46,7 +46,11 @@ async def get_thoughts(search_term: str = None) -> List[Thought]:
     usecase = Container.resolve(ListThoughtsUsecase)
 
     try:
-        search_request = ListThoughtsDTO(search_term=search_term)
+        category_ids_list = None
+        if category_ids:
+            category_ids_list = category_ids.split(',')
+        
+        search_request = ListThoughtsDTO(search_term=search_term, category_ids=category_ids_list)
         result = usecase.execute(search_request)
         return result
     except ApplicationException as ae:

@@ -95,6 +95,39 @@ class ThoughtRepository(ThoughtRepositoryInterface):
 
         return thoughts
 
+    def list_by_categories(self, category_ids: List[str]) -> List[Thought]:
+        """List thoughts by category IDs"""
+        if not self.db:
+            self.db = next(get_db())
+
+        thought_models = self.db.query(ThoughtModel).join(
+            ThoughtModel.categories
+        ).filter(
+            CategoryModel.id.in_(category_ids)
+        ).all()
+
+        thoughts = []
+        for model in thought_models:
+            categories = [
+                Category(
+                    id=cat.id,
+                    name=cat.name,
+                    color=cat.color
+                )
+                for cat in model.categories
+            ]
+
+            thoughts.append(Thought(
+                id=model.id,
+                title=model.title,
+                summary=model.summary,
+                text=model.text,
+                categories=categories,
+                embeddings=[]
+            ))
+
+        return thoughts
+
     def delete(self, id: str) -> None:
         """Delete a thought by its ID"""
         if not self.db:

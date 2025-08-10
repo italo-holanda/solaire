@@ -33,11 +33,16 @@ export const getThoughts = async (
     }));
   }
 
+  const apiParams: any = { ...params };
+  if (params.category_ids && params.category_ids.length > 0) {
+    apiParams.category_ids = params.category_ids.join(',');
+  }
+
   const response: AxiosResponse<Thought[]> = await api.get("/thoughts", {
     headers: {
       "Content-Type": "application/json",
     },
-    params,
+    params: apiParams,
   });
   return standardizePayload(response.data);
 };

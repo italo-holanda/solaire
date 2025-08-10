@@ -19,6 +19,10 @@ class ThoughtRepositoryInterface(ABC):
         pass
 
     @abstractmethod
+    def list_by_categories(self, category_ids: List[str]) -> List[Thought]:
+        pass
+
+    @abstractmethod
     def delete(self, id: str) -> None:
         pass
 

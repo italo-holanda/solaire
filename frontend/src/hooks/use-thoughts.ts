@@ -14,7 +14,10 @@ export const useThoughts = (overrideParams: ListThoughtsDTO = {}) => {
   const hasOverrideParams = Object.keys(overrideParams).length > 0;
   const apiParams: ListThoughtsDTO = hasOverrideParams
     ? overrideParams
-    : { search_term: currentView === "gallery" ? navigationParams?.searchTerms : undefined };
+    : { 
+        search_term: currentView === "gallery" ? navigationParams?.searchTerms : undefined,
+        category_ids: navigationParams?.categories?.map(cat => cat.id)
+      };
 
   return useQuery({
     queryKey: ["thoughts", apiParams],

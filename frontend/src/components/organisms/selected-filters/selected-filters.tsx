@@ -1,5 +1,5 @@
 import { Button } from "@/components/atoms/button";
-import { CategoryBadge } from "@/components/molecules/category-badge/category-badge";
+import { SelectedCategoryBadge } from "@/components/molecules/selected-category-badge/selected-category-badge";
 import { useNavigation } from "@/hooks/use-navigation";
 import { TrashIcon } from "lucide-react";
 
@@ -25,7 +25,7 @@ export function SelectedFilters() {
           <ul className="flex gap-1 flex-wrap">
             <span className="text-xs text-stone-300">Selected categories:</span>
             {params.categories.map((cat) => (
-              <CategoryBadge key={cat.id} {...cat} />
+              <SelectedCategoryBadge key={cat.id} {...cat} />
             ))}
           </ul>
         )}
