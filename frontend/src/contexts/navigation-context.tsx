@@ -1,10 +1,11 @@
 import { createContext, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import type { NavigationView } from "@/types/common/navigation";
+import type { Category } from "@/types";
 
 type Params = {
   searchTerms?: string;
-  categoryIds?: string[];
+  categories?: Category[];
 };
 
 type NavigationContextValue = {

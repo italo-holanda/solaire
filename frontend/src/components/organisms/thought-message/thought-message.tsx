@@ -105,6 +105,7 @@ export function ThoughtMessage(props: Thought) {
                 <ul className="flex flex-wrap gap-1">
                   {props.categories.map((category) => (
                     <CategoryBadge
+                      id={category.id}
                       color={category.color ?? "green"}
                       name={category.name}
                     />

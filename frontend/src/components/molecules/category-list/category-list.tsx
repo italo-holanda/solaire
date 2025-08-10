@@ -5,15 +5,19 @@ import { useMemo } from "react";
 export function CategoryList() {
   const { data } = useThoughts();
 
-  const categoires = useMemo(() => {
-    return data?.flatMap((th) => th.categories) ?? [];
+  const categories = useMemo(() => {
+    const allCategories = data?.flatMap((th) => th.categories) ?? [];
+    const uniqueCategories = allCategories.filter((cat, index, self) => 
+      index === self.findIndex((c) => c.id === cat.id)
+    );
+    return uniqueCategories;
   }, [data]);
 
   return (
-    <ul className="flex flex-col gap-2 overflow-y-scroll max-h-60 bg-stone-900 p-3 border-1 rounded-lg">
-      {categoires.map((cat) => (
+    <ul className="flex flex-wrap gap-1 overflow-y-scroll max-h-60 bg-stone-900 p-3 border-1 rounded-lg">
+      {categories.map((cat) => (
         <li key={cat.id}>
-          <CategoryBadge color={cat.color ?? "green"} name={cat.name} />
+          <CategoryBadge {...cat} />
         </li>
       ))}
     </ul>

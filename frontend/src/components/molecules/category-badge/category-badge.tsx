@@ -1,13 +1,30 @@
 import { Badge } from "@/components/atoms/badge";
+import { useNavigation } from "@/hooks/use-navigation";
+import type { Category } from "@/types";
 
-type CategoryBadgeProps = {
-  name: string;
-  color: string;
-};
+export function CategoryBadge(props: Category) {
+  const { params, setParams, getParams, setCurrentView } = useNavigation();
 
-export function CategoryBadge(props: CategoryBadgeProps) {
+  function handleClick() {
+    const currentCategories = getParams().categories ?? [];
+    const categoryExists = currentCategories.some(category => category.id === props.id);
+    
+    if (!categoryExists) {
+      setParams({
+        ...params,
+        categories: currentCategories.concat(props),
+      });
+    }
+    setCurrentView("gallery");
+  }
+
   return (
-    <Badge variant="outline">
+    <Badge
+      onClick={handleClick}
+      role="button"
+      variant="outline"
+      className="cursor-pointer"
+    >
       <div
         style={{ backgroundColor: props.color }}
         className="min-h-2 h-2 max-h-2 min-w-2 w-2 max-w-2 rounded-full"
