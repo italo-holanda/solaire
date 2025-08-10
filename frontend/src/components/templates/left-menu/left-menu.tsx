@@ -8,7 +8,7 @@ import { SearchInput } from "@/components/molecules/search-input/search-input";
 import { useNavigation } from "@/hooks/use-navigation";
 
 export function LeftMenu() {
-  const { setCurrentView, currentView } = useNavigation();
+  const navigationHook = useNavigation();
 
   return (
     <aside className="bg-stone-950 h-full w-xs xl:min-w-xs p-2 border-r-1 rounded-l-md">
@@ -25,17 +25,27 @@ export function LeftMenu() {
           <span className="text-xs text-stone-300">Menu</span>
           <nav className="flex flex-col gap-3">
             <Button
-              onClick={() => setCurrentView("history")}
+              onClick={() => {
+                navigationHook.setCurrentView("history");
+                navigationHook.setParams({
+                  ...navigationHook.params,
+                  searchTerms: '',
+                });
+              }}
               size="lg"
-              variant={currentView === "history" ? "nav" : "navGhost"}
+              variant={
+                navigationHook.currentView === "history" ? "nav" : "navGhost"
+              }
             >
               <SquarePlusIcon />
               New thought
             </Button>
             <Button
-              onClick={() => setCurrentView("gallery")}
+              onClick={() => navigationHook.setCurrentView("gallery")}
               size="lg"
-              variant={currentView === "gallery" ? "nav" : "navGhost"}
+              variant={
+                navigationHook.currentView === "gallery" ? "nav" : "navGhost"
+              }
             >
               <LayoutGridIcon />
               Gallery of thoughts

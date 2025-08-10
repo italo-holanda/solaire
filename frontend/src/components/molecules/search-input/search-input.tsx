@@ -11,8 +11,9 @@ export function SearchInput() {
         <SearchIcon size={20} color="#8C8C8C" />
       </div>
       <Input
+        value={params.searchTerms}
         onChange={(ev) => {
-          setCurrentView('gallery')
+          setCurrentView("gallery");
           setParams({
             ...params,
             searchTerms: ev.currentTarget.value.trim(),
