@@ -28,8 +28,8 @@ export function LeftMenu() {
               onClick={() => {
                 navigationHook.setCurrentView("history");
                 navigationHook.setParams({
-                  ...navigationHook.params,
-                  searchTerms: '',
+                  searchTerms: "",
+                  categories: undefined,
                 });
               }}
               size="lg"
