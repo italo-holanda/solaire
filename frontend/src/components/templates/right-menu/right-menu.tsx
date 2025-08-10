@@ -1,4 +1,5 @@
 import { Separator } from "@/components/atoms/separator";
+import { CategoryList } from "@/components/molecules/category-list/category-list";
 import { RecentThoughts } from "@/components/molecules/recent-thoughts/recent-thoughts";
 
 export function RightMenu() {
@@ -13,6 +14,11 @@ export function RightMenu() {
       <div className="py-8 px-4 flex flex-col gap-2">
         <span className="text-xs text-stone-300">Last thoughts</span>
         <RecentThoughts />
+      </div>
+
+      <div className="px-4 flex flex-col gap-2">
+        <span className="text-xs text-stone-300">Categories</span>
+        <CategoryList />
       </div>
     </aside>
   );
