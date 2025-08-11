@@ -1,5 +1,5 @@
 import { Separator } from "@/components/atoms/separator";
-import { CreatePublicationButton } from "@/components/molecules/create-publication-button/create-publication-button";
+import { CreatePublicationButton } from "@/components/organisms/create-publication-button/create-publication-button";
 import { GalleryCard } from "@/components/molecules/gallery-card/gallery-card";
 import { useGallery } from "@/hooks/use-gallery";
 import { useThoughts } from "@/hooks/use-thoughts";
