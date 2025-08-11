@@ -1,9 +1,12 @@
 import { Separator } from "@/components/atoms/separator";
+import { CreatePublicationButton } from "@/components/molecules/create-publication-button/create-publication-button";
 import { GalleryCard } from "@/components/molecules/gallery-card/gallery-card";
+import { useGallery } from "@/hooks/use-gallery";
 import { useThoughts } from "@/hooks/use-thoughts";
 
 export function ThoughtGallery() {
   const { data } = useThoughts();
+  const { selectedThoughts } = useGallery();
 
   return (
     <main className="p-2 w-full relative h-full flex flex-col">
@@ -22,6 +25,13 @@ export function ThoughtGallery() {
           <div className="w-full mt-6" />
         </ul>
       </div>
+
+      {!!selectedThoughts.length && (
+        <div className="shadow-2xl p-3 border-1 bg-stone-950 rounded-lg flex items-center justify-between">
+          <span className="text-sm text-stone-200">{selectedThoughts.length} thoughts selected</span>
+          <CreatePublicationButton />
+        </div>
+      )}
     </main>
   );
 }
