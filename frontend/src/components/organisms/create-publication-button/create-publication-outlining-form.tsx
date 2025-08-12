@@ -36,7 +36,7 @@ function OutliningItem(props: {
 
   return (
     <li 
-      className="flex flex-col justify-between gap-2 p-4 bg-stone-850 border-1 rounded-lg text-sm text-stone-200 cursor-move hover:bg-stone-800 transition-colors"
+      className="flex flex-col justify-between gap-2 p-4 bg-stone-850 border-1 rounded-lg text-sm text-stone-200 cursor-move hover:bg-stone-900 transition-colors"
       draggable
       onDragStart={(e) => props.onDragStart(e, props.index)}
       onDragOver={props.onDragOver}
@@ -106,6 +106,7 @@ export function CreatePublicationOutliningForm(props: {
 }) {
   const [outlining, setOutlining] = useState(props.publication.outlining);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const scrollContainerRef = useRef<HTMLUListElement>(null);
 
   const handleDragStart = (e: React.DragEvent, index: number) => {
     setDraggedIndex(index);
@@ -134,6 +135,18 @@ export function CreatePublicationOutliningForm(props: {
     setDraggedIndex(null);
   };
 
+  const handleAddNewBlock = () => {
+    setOutlining(outlining.concat(""));
+    setTimeout(() => {
+      if (scrollContainerRef.current) {
+        scrollContainerRef.current.scrollTo({
+          top: scrollContainerRef.current.scrollHeight,
+          behavior: "smooth"
+        });
+      }
+    }, 100);
+  };
+
   return (
     <form onSubmit={(ev) => ev.preventDefault()}>
       <Separator className="my-2" />
@@ -145,7 +158,7 @@ export function CreatePublicationOutliningForm(props: {
           text. Drag and drop to reorder blocks.
         </p>
         <div className="flex flex-col gap-1">
-          <ul className="mt-1 flex flex-col gap-2 max-h-80 overflow-y-scroll border-1 bg-stone-950 p-2 pl-4 rounded-md">
+          <ul ref={scrollContainerRef} className="mt-1 flex flex-col gap-2 max-h-80 overflow-y-scroll border-1 bg-stone-950 p-2 pl-4 rounded-md">
             {outlining.map((text, i) => (
               <Fragment key={text}>
                 <OutliningItem
@@ -169,11 +182,11 @@ export function CreatePublicationOutliningForm(props: {
             ))}
           </ul>
           <Button
-            onClick={() => setOutlining(outlining.concat(""))}
+            onClick={handleAddNewBlock}
             variant="secondary"
             size="sm"
           >
-            Add new <PlusIcon />
+            Add new block <PlusIcon />
           </Button>
         </div>
       </fieldset>
