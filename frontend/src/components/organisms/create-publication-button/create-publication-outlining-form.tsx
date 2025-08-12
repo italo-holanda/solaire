@@ -5,6 +5,7 @@ import { Separator } from "@/components/atoms/separator";
 import { CheckIcon, EditIcon, PlusIcon, TrashIcon } from "lucide-react";
 import { Fragment, useState, useRef } from "react";
 import { Textarea } from "@/components/atoms/textarea";
+import { createPublicationContent } from "@/services/api/publications/publications";
 
 function OutliningItem(props: {
   index: number;
@@ -139,7 +140,23 @@ export function CreatePublicationOutliningForm(props: {
         <Button size="sm" variant="ghost">
           Cancel
         </Button>
-        <Button onClick={() => null} size="sm">
+        <Button
+          onClick={async () => {
+            try {
+              props.setIsLoading(true);
+              const updatedPublication = await createPublicationContent({
+                publication_id: props.publication.id,
+                publication_outlining: outlining,
+              });
+              props.setPublication(updatedPublication);
+            } catch (error) {
+              console.error("Error creating publication content:", error);
+            } finally {
+              props.setIsLoading(false);
+            }
+          }}
+          size="sm"
+        >
           Finish
           <CheckIcon />
         </Button>

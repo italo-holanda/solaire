@@ -12,6 +12,7 @@ import type { Publication } from "@/types";
 import { CreatePublicationOutliningForm } from "./create-publication-outlining-form";
 import { CreatePublicationFormatForm } from "./create-publication-format-form";
 import { Spinner } from "@/components/atoms/spinner";
+import { CreatePublicationContent } from "./create-publication-content";
 
 export function CreatePublicationButton() {
   const [open, setOpen] = useState(false);
@@ -37,7 +38,7 @@ export function CreatePublicationButton() {
             return (
               <div className="bg-stone-950 rounded-lg flex items-center justify-center py-4 gap-1 w-full">
                 <Spinner size="sm" />
-                <span className="text-xs text-stone-400">Loading...</span>
+                <span className="text-sm text-stone-400">Loading...</span>
               </div>
             );
 
@@ -48,11 +49,14 @@ export function CreatePublicationButton() {
               />
             );
 
-          return (
-            <CreatePublicationOutliningForm
-              {...{ publication, setPublication, setIsLoading }}
-            />
-          );
+          if (!publication.content)
+            return (
+              <CreatePublicationOutliningForm
+                {...{ publication, setPublication, setIsLoading }}
+              />
+            );
+
+          return <CreatePublicationContent publication={publication} />;
         })()}
       </DialogContent>
     </Dialog>
