@@ -2,7 +2,13 @@ import type { Publication } from "@/types";
 
 import { Button } from "@/components/atoms/button";
 import { Separator } from "@/components/atoms/separator";
-import { CheckIcon, EditIcon, PlusIcon, TrashIcon, GripVerticalIcon } from "lucide-react";
+import {
+  CheckIcon,
+  EditIcon,
+  PlusIcon,
+  TrashIcon,
+  GripVerticalIcon,
+} from "lucide-react";
 import { Fragment, useState, useRef } from "react";
 import { Textarea } from "@/components/atoms/textarea";
 import { createPublicationContent } from "@/services/api/publications/publications";
@@ -35,7 +41,7 @@ function OutliningItem(props: {
   };
 
   return (
-    <li 
+    <li
       className="flex flex-col justify-between gap-2 p-4 bg-stone-850 border-1 rounded-lg text-sm text-stone-200 cursor-move hover:bg-stone-900 transition-colors"
       draggable
       onDragStart={(e) => props.onDragStart(e, props.index)}
@@ -49,6 +55,7 @@ function OutliningItem(props: {
         </span>
         <div>
           <Button
+            className="edit-button"
             disabled={isEditable}
             onClick={() => setIsEditable(true)}
             size="sm"
@@ -120,29 +127,44 @@ export function CreatePublicationOutliningForm(props: {
 
   const handleDrop = (e: React.DragEvent, dropIndex: number) => {
     e.preventDefault();
-    
+
     if (draggedIndex === null || draggedIndex === dropIndex) {
       return;
     }
 
     const newOutlining = Array.from(outlining);
     const draggedItem = newOutlining[draggedIndex];
-    
+
     newOutlining.splice(draggedIndex, 1);
     newOutlining.splice(dropIndex, 0, draggedItem);
-    
+
     setOutlining(newOutlining);
     setDraggedIndex(null);
   };
 
   const handleAddNewBlock = () => {
+    const newIndex = outlining.length;
     setOutlining(outlining.concat(""));
+
     setTimeout(() => {
       if (scrollContainerRef.current) {
-        scrollContainerRef.current.scrollTo({
-          top: scrollContainerRef.current.scrollHeight,
-          behavior: "smooth"
-        });
+        const newBlockElement = scrollContainerRef.current.children[newIndex];
+        if (newBlockElement) {
+          // Open in edit mode
+          const editButton = newBlockElement.querySelector(
+            ".edit-button"
+          ) as HTMLButtonElement;
+          if (editButton) {
+            editButton.click();
+          }
+        }
+
+        setTimeout(() => {
+          // Focus on text-area input
+          const textArea = newBlockElement.querySelector("textarea");
+          textArea?.focus();
+          textArea?.scrollIntoView({ behavior: "smooth" });
+        }, 100);
       }
     }, 100);
   };
@@ -158,7 +180,10 @@ export function CreatePublicationOutliningForm(props: {
           text. Drag and drop to reorder blocks.
         </p>
         <div className="flex flex-col gap-1">
-          <ul ref={scrollContainerRef} className="mt-1 flex flex-col gap-2 max-h-80 overflow-y-scroll border-1 bg-stone-950 p-2 pl-4 rounded-md">
+          <ul
+            ref={scrollContainerRef}
+            className="mt-1 flex flex-col gap-2 max-h-80 overflow-y-scroll border-1 bg-stone-950 p-2 pl-4 rounded-md"
+          >
             {outlining.map((text, i) => (
               <Fragment key={text}>
                 <OutliningItem
@@ -181,11 +206,7 @@ export function CreatePublicationOutliningForm(props: {
               </Fragment>
             ))}
           </ul>
-          <Button
-            onClick={handleAddNewBlock}
-            variant="secondary"
-            size="sm"
-          >
+          <Button onClick={handleAddNewBlock} variant="secondary" size="sm">
             Add new block <PlusIcon />
           </Button>
         </div>
