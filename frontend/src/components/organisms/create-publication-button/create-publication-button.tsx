@@ -21,6 +21,12 @@ export function CreatePublicationButton() {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  const onCancel = () => {
+    setPublication(undefined);
+    setIsLoading(false);
+    setOpen(false);
+  };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -45,18 +51,23 @@ export function CreatePublicationButton() {
           if (!publication?.outlining)
             return (
               <CreatePublicationFormatForm
-                {...{ publication, setPublication, setIsLoading }}
+                {...{ publication, setPublication, setIsLoading, onCancel }}
               />
             );
 
           if (!publication.content)
             return (
               <CreatePublicationOutliningForm
-                {...{ publication, setPublication, setIsLoading }}
+                {...{ publication, setPublication, setIsLoading, onCancel }}
               />
             );
 
-          return <CreatePublicationContent publication={publication} />;
+          return (
+            <CreatePublicationContent
+              onCancel={onCancel}
+              publication={publication}
+            />
+          );
         })()}
       </DialogContent>
     </Dialog>

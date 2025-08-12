@@ -35,6 +35,7 @@ export function CreatePublicationFormatForm(props: {
   publication?: Publication;
   setPublication: (pub: Publication) => void;
   setIsLoading: (isLoading: boolean) => void;
+  onCancel: () => void;
 }) {
   const { selectedThoughts } = useGallery();
 
@@ -105,7 +106,7 @@ export function CreatePublicationFormatForm(props: {
       <Separator />
 
       <div className="flex justify-between items-center">
-        <Button size="sm" variant="ghost">
+        <Button onClick={props.onCancel} size="sm" variant="ghost">
           Cancel
         </Button>
         <Button onClick={onSubmit} size="sm">

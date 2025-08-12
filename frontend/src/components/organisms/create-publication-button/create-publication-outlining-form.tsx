@@ -110,6 +110,7 @@ export function CreatePublicationOutliningForm(props: {
   publication: Publication;
   setPublication: (pub: Publication) => void;
   setIsLoading: (isLoading: boolean) => void;
+  onCancel: () => void;
 }) {
   const [outlining, setOutlining] = useState(props.publication.outlining);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
@@ -214,7 +215,7 @@ export function CreatePublicationOutliningForm(props: {
       <Separator className="my-2 mt-6" />
 
       <div className="flex justify-between items-center">
-        <Button size="sm" variant="ghost">
+        <Button onClick={props.onCancel} size="sm" variant="ghost">
           Cancel
         </Button>
         <Button

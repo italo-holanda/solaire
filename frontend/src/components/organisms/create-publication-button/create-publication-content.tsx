@@ -4,16 +4,19 @@ import { Textarea } from "@/components/atoms/textarea";
 import type { Publication } from "@/types";
 import { DownloadIcon } from "lucide-react";
 
-export function CreatePublicationContent(props: { publication: Publication }) {
+export function CreatePublicationContent(props: {
+  publication: Publication;
+  onCancel: () => void;
+}) {
   const handleDownload = () => {
     const content = props.publication.content;
-    const title = props.publication.title || 'publication';
-    const filename = `${title.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.md`;
-    
-    const blob = new Blob([content], { type: 'text/markdown' });
+    const title = props.publication.title || "publication";
+    const filename = `${title.replace(/[^a-z0-9]/gi, "-").toLowerCase()}.md`;
+
+    const blob = new Blob([content], { type: "text/markdown" });
     const url = URL.createObjectURL(blob);
-    
-    const link = document.createElement('a');
+
+    const link = document.createElement("a");
     link.href = url;
     link.download = filename;
     document.body.appendChild(link);
@@ -43,7 +46,7 @@ export function CreatePublicationContent(props: { publication: Publication }) {
       <Separator />
 
       <div className="flex justify-between items-center">
-        <Button size="sm" variant="ghost">
+        <Button onClick={props.onCancel} size="sm" variant="ghost">
           Cancel
         </Button>
         <Button onClick={handleDownload} size="sm">
