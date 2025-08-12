@@ -2,7 +2,7 @@ import type { Publication } from "@/types";
 
 import { Button } from "@/components/atoms/button";
 import { Separator } from "@/components/atoms/separator";
-import { CheckIcon, EditIcon, PlusIcon, TrashIcon } from "lucide-react";
+import { CheckIcon, EditIcon, PlusIcon, TrashIcon, GripVerticalIcon } from "lucide-react";
 import { Fragment, useState, useRef } from "react";
 import { Textarea } from "@/components/atoms/textarea";
 import { createPublicationContent } from "@/services/api/publications/publications";
@@ -12,6 +12,9 @@ function OutliningItem(props: {
   text: string;
   setText: (text: string) => void;
   deleteText: () => void;
+  onDragStart: (e: React.DragEvent, index: number) => void;
+  onDragOver: (e: React.DragEvent) => void;
+  onDrop: (e: React.DragEvent, index: number) => void;
 }) {
   const [isEditable, setIsEditable] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -32,9 +35,18 @@ function OutliningItem(props: {
   };
 
   return (
-    <li className="flex flex-col justify-between gap-2 p-4 bg-stone-850 border-1 rounded-lg text-sm text-stone-200">
+    <li 
+      className="flex flex-col justify-between gap-2 p-4 bg-stone-850 border-1 rounded-lg text-sm text-stone-200 cursor-move hover:bg-stone-800 transition-colors"
+      draggable
+      onDragStart={(e) => props.onDragStart(e, props.index)}
+      onDragOver={props.onDragOver}
+      onDrop={(e) => props.onDrop(e, props.index)}
+    >
       <span className="flex justify-between items-center">
-        <span className="text-stone-400">Block {props.index + 1}</span>
+        <span className="flex items-center gap-2">
+          <GripVerticalIcon className="w-4 h-4 text-stone-500" />
+          <span className="text-stone-400">Block {props.index + 1}</span>
+        </span>
         <div>
           <Button
             disabled={isEditable}
@@ -93,6 +105,34 @@ export function CreatePublicationOutliningForm(props: {
   setIsLoading: (isLoading: boolean) => void;
 }) {
   const [outlining, setOutlining] = useState(props.publication.outlining);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+  };
+
+  const handleDrop = (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault();
+    
+    if (draggedIndex === null || draggedIndex === dropIndex) {
+      return;
+    }
+
+    const newOutlining = Array.from(outlining);
+    const draggedItem = newOutlining[draggedIndex];
+    
+    newOutlining.splice(draggedIndex, 1);
+    newOutlining.splice(dropIndex, 0, draggedItem);
+    
+    setOutlining(newOutlining);
+    setDraggedIndex(null);
+  };
 
   return (
     <form onSubmit={(ev) => ev.preventDefault()}>
@@ -102,7 +142,7 @@ export function CreatePublicationOutliningForm(props: {
         <label className="text-stone-200 mt-3">Summarize your content</label>
         <p className="text-xs text-stone-300">
           Add, remove, and edit the blocks to refine the flow of your final
-          text.
+          text. Drag and drop to reorder blocks.
         </p>
         <div className="flex flex-col gap-1">
           <ul className="mt-1 flex flex-col gap-2 max-h-80 overflow-y-scroll border-1 bg-stone-950 p-2 pl-4 rounded-md">
@@ -121,6 +161,9 @@ export function CreatePublicationOutliningForm(props: {
                     newArr.splice(i, 1);
                     setOutlining(newArr);
                   }}
+                  onDragStart={handleDragStart}
+                  onDragOver={handleDragOver}
+                  onDrop={handleDrop}
                 />
               </Fragment>
             ))}
