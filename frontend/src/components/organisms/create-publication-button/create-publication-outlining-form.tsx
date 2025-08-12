@@ -1,0 +1,149 @@
+import type { Publication } from "@/types";
+
+import { Button } from "@/components/atoms/button";
+import { Separator } from "@/components/atoms/separator";
+import { CheckIcon, EditIcon, PlusIcon, TrashIcon } from "lucide-react";
+import { Fragment, useState, useRef } from "react";
+import { Textarea } from "@/components/atoms/textarea";
+
+function OutliningItem(props: {
+  index: number;
+  text: string;
+  setText: (text: string) => void;
+  deleteText: () => void;
+}) {
+  const [isEditable, setIsEditable] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      const newText = textareaRef.current?.value || props.text;
+      props.setText(newText);
+      setIsEditable(false);
+    }
+  };
+
+  const handleSave = () => {
+    const newText = textareaRef.current?.value || props.text;
+    props.setText(newText);
+    setIsEditable(false);
+  };
+
+  return (
+    <li className="flex flex-col justify-between gap-2 p-4 bg-stone-850 border-1 rounded-lg text-sm text-stone-200">
+      <span className="flex justify-between items-center">
+        <span className="text-stone-400">Block {props.index + 1}</span>
+        <div>
+          <Button
+            disabled={isEditable}
+            onClick={() => setIsEditable(true)}
+            size="sm"
+            variant="ghost"
+          >
+            Edit
+            <EditIcon />
+          </Button>
+          <Button
+            disabled={isEditable}
+            onClick={props.deleteText}
+            size="sm"
+            variant="ghost"
+          >
+            Delete
+            <TrashIcon />
+          </Button>
+        </div>
+      </span>
+      <Separator />
+
+      {!isEditable && <span className="italic text-base">"{props.text}"</span>}
+
+      {isEditable && (
+        <div className="flex flex-col gap-2">
+          <Textarea
+            maxLength={200}
+            ref={textareaRef}
+            className="italic text-base"
+            defaultValue={props.text}
+            onKeyDown={handleKeyDown}
+          />
+          <div className="flex gap-2">
+            <Button onClick={handleSave} size="sm" variant="secondary">
+              Save
+            </Button>
+            <Button
+              onClick={() => setIsEditable(false)}
+              size="sm"
+              variant="ghost"
+            >
+              Cancel
+            </Button>
+          </div>
+        </div>
+      )}
+    </li>
+  );
+}
+
+export function CreatePublicationOutliningForm(props: {
+  publication: Publication;
+  setPublication: (pub: Publication) => void;
+  setIsLoading: (isLoading: boolean) => void;
+}) {
+  const [outlining, setOutlining] = useState(props.publication.outlining);
+
+  return (
+    <form onSubmit={(ev) => ev.preventDefault()}>
+      <Separator className="my-2" />
+
+      <fieldset className="flex flex-col gap-2">
+        <label className="text-stone-200 mt-3">Summarize your content</label>
+        <p className="text-xs text-stone-300">
+          Add, remove, and edit the blocks to refine the flow of your final
+          text.
+        </p>
+        <div className="flex flex-col gap-1">
+          <ul className="mt-1 flex flex-col gap-2 max-h-80 overflow-y-scroll border-1 bg-stone-950 p-2 pl-4 rounded-md">
+            {outlining.map((text, i) => (
+              <Fragment key={text}>
+                <OutliningItem
+                  index={i}
+                  text={text}
+                  setText={(text: string) => {
+                    const newArr = Array.from([...outlining]);
+                    newArr[i] = text;
+                    setOutlining(newArr);
+                  }}
+                  deleteText={() => {
+                    const newArr = Array.from([...outlining]);
+                    newArr.splice(i, 1);
+                    setOutlining(newArr);
+                  }}
+                />
+              </Fragment>
+            ))}
+          </ul>
+          <Button
+            onClick={() => setOutlining(outlining.concat(""))}
+            variant="secondary"
+            size="sm"
+          >
+            Add new <PlusIcon />
+          </Button>
+        </div>
+      </fieldset>
+      <Separator className="my-2 mt-6" />
+
+      <div className="flex justify-between items-center">
+        <Button size="sm" variant="ghost">
+          Cancel
+        </Button>
+        <Button onClick={() => null} size="sm">
+          Finish
+          <CheckIcon />
+        </Button>
+      </div>
+    </form>
+  );
+}
