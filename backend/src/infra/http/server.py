@@ -1,10 +1,13 @@
+from pathlib import Path
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.infra.http.routes import common, thoughts, categorires, publications
 
-load_dotenv(dotenv_path='.env')
+root_dir = Path(__file__).parent.parent.parent.parent.parent
+env_path = root_dir / ".env"
+load_dotenv(dotenv_path=env_path)
 
 app = FastAPI()
 

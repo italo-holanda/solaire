@@ -6,13 +6,16 @@
 
 echo "Starting integration tests..."
 
-if [ -f .env ]; then
+root_dir="$(dirname "$(pwd)")"
+env_file="$root_dir/.env"
+
+if [ -f "$env_file" ]; then
   set -a
-  source .env
+  source "$env_file"
   set +a
-  echo "Loaded environment variables from .env file."
+  echo "Loaded environment variables from $env_file"
 else
-  echo ".env file not found. Using default environment variables."
+  echo "$env_file not found. Using default environment variables."
 fi
 
 echo "Environment:"
