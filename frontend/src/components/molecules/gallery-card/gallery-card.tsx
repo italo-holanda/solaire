@@ -24,7 +24,7 @@ export function GalleryCard(props: Thought) {
           : addSelectedThought(props)
       }
     >
-      <div className="h-65 flex flex-col gap-2 text-stone-300 text-sm justify-between">
+      <div className="h-70 flex flex-col gap-2 text-stone-300 text-sm justify-between">
         <h1 className="text-stone-200 leading-5.5 text-base">{title}</h1>
         <Separator />
         <p className="italic">
