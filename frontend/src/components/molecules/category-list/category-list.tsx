@@ -14,7 +14,7 @@ export function CategoryList() {
   }, [data]);
 
   return (
-    <ul className="flex flex-wrap gap-1 overflow-y-scroll max-h-60 bg-stone-900 p-3 border-1 rounded-lg">
+    <ul className="flex flex-wrap gap-1 overflow-y-scroll max-h-60 bg-stone-900 p-3 border-1 rounded-lg overflow-x-hidden">
       {categories.map((cat) => (
         <li key={cat.id}>
           <CategoryBadge {...cat} />
