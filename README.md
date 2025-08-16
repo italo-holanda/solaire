@@ -3,7 +3,27 @@
 **Daily writing meets AI interpretation — for clarity, consistency, and creativity.**
 
 > 📦 **Work in Progress**:
-Solaire is under active development — the user interface is currently being implemented, with ongoing refinements to the backend architecture to improve modularity, testability, and performance.
+> Solaire is under active development — the user interface is currently being implemented, with ongoing refinements to the backend architecture to improve modularity, testability, and performance.
+
+## How to run
+
+```sh
+# -- Running dependencies
+$ cp env.example .env
+$ docker compose up -d
+
+# -- Running backend
+$ cd backend
+$ uv pip install .
+$ alembic -c src/infra/databases/relational/alembic.ini upgrade head
+$ ./run_server.sh
+
+# -- Running frontend
+$ cd frontend
+$ npm install --global pnpm
+$ pnpm i
+$ pnpm dev
+```
 
 ## ✨ Why "daily writing"?
 
@@ -70,13 +90,13 @@ The UI is designed to be minimal, welcoming, and functional. It's divided into t
    - Select multiple
    - Generate a blog or social media publication
 
-| Screenshots |
-|-------------|
+| Screenshots                                               |
+| --------------------------------------------------------- |
 | ![New Thought Page](frontend/public/new-thought-page.png) |
-| ![Gallery Page](frontend/public/gallery-page.png) |
-| ![New Publication 1](frontend/public/new-pub-1.png) |
-| ![New Publication 2](frontend/public/new-pub-2.png) |
-| ![New Publication 3](frontend/public/new-pub-3.png) |
+| ![Gallery Page](frontend/public/gallery-page.png)         |
+| ![New Publication 1](frontend/public/new-pub-1.png)       |
+| ![New Publication 2](frontend/public/new-pub-2.png)       |
+| ![New Publication 3](frontend/public/new-pub-3.png)       |
 
 🧪 The frontend is built with:
 
@@ -84,7 +104,6 @@ The UI is designed to be minimal, welcoming, and functional. It's divided into t
 - TailwindCSS
 - Tanstack
 - Vite
-
 
 ### 🧠 Backend Design
 
